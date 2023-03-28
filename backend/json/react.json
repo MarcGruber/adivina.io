@@ -1,0 +1,69 @@
+{
+    "preguntas": [
+        {
+            "pregunta": "¿Qué es React?",
+            "opciones": [
+                {
+                    "opcion": "Un lenguaje de programación.",
+                    "correcta": false
+                },
+                {
+                    "opcion": "Una biblioteca de JavaScript para construir interfaces de usuario.",
+                    "correcta": true
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Cómo se crea un componente en React?",
+            "opciones": [
+                {
+                    "opcion": "Utilizando una función o una clase.",
+                    "correcta": true
+                },
+                {
+                    "opcion": "Utilizando una hoja de estilos CSS.",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Qué son los props en React?",
+            "opciones": [
+                {
+                    "opcion": "Son propiedades que se pasan a los componentes para configurar su comportamiento y apariencia.",
+                    "correcta": true
+                },
+                {
+                    "opcion": "Son funciones que se utilizan para manejar eventos en los componentes.",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Qué es el estado en React?",
+            "opciones": [
+                {
+                    "opcion": "Es una variable global que almacena información sobre la aplicación.",
+                    "correcta": false
+                },
+                {
+                    "opcion": "Es un objeto que almacena información dinámica sobre el componente y que puede cambiar durante su ciclo de vida.",
+                    "correcta": true
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Cómo se manejan los eventos en React?",
+            "opciones": [
+                {
+                    "opcion": "Utilizando funciones que se pasan como props a los elementos del DOM.",
+                    "correcta": true
+                },
+                {
+                    "opcion": "Utilizando el método setState para actualizar el estado del componente.",
+                    "correcta": false
+                }
+            ]
+        }
+    ]
+}
