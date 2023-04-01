@@ -1,12 +1,26 @@
 <!DOCTYPE html>
 <html>
-    <head>
+  <head>
+    <title>Sala de preguntas y respuestas</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>Sala de preguntas y respuestas</h1>
 
-    </head>
-    <body>
-        Client
-        Entra el teu nom <input id="nicknameInput" type="text">
-        <button id="sendButton">Enviar</button>
+    <button id="createRoom">Crear sala</button>
+
+    <div id="joinRoomContainer">
+      <label for="roomId">ID de la sala:</label>
+      <input type="text" id="roomId">
+      <button id="joinRoom">Unirse a la sala</button>
+    </div>
+
+    <button id="addQuestion">Agregar pregunta</button>
+
+    <ul id="questionList"></ul>
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.min.js"></script>
     <script src="main.js" ></script>   
     </body>

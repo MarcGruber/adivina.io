@@ -1,33 +1,33 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-
+const cors = require('cors')
+const preguntes = require('./json/react.json')
 const app = express();
+app.use(cors())
 const httpServer = createServer(app);
 
-app.use(express.static("public"));
 
-const io = new Server(httpServer, {});
+const io = new Server(httpServer, {
+    cors : {
+        origin: '*'
+    }
+});
 
+
+let rooms = {};
 
 io.on("connection", (socket) => {
-  
-    console.log('Connectat un client...')
 
-    socket.on("nickname", function(data) {
-            console.log(data.nickname)
-            
-            // respondre al que ha enviat
-            socket.emit("nickname rebut",{"response":"ok"})
+    socket.emit('preguntes',preguntes)
 
-            // respondre a la resta de clients menys el que ha enviat
-            // socket.broadcast.emit(/* ... */);
-
-            // Totes les funcions disponibles les tenim a
-            //  https://socket.io/docs/v4/emit-cheatsheet/
+    console.log('the user '+socket.id+ ' is connected')
+    socket.on('message', (msg) => {
+        socket.broadcast.emit('msg', msg)
     })
 
 });
+
 
 httpServer.listen(3000, ()=>
     console.log(`Server listening at http://localhost:3000`)

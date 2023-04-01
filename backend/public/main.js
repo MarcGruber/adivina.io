@@ -1,17 +1,39 @@
-
 const socket = io();
 
-const nicknameInput = document.getElementById("nicknameInput");
-const sendButton = document.getElementById("sendButton");
-sendButton.addEventListener("click", send)
+// Crear sala
+document.getElementById("createRoom").addEventListener("click", () => {
+  socket.emit("createRoom");
+});
 
-function send() {
-    socket.emit("nickname", {nickname: nicknameInput.value} )
-}
+socket.on("roomCreated", (data) => {
+  const roomId = data.roomId;
+  console.log("Room created:", roomId);
+});
 
-socket.on('nickname rebut', function(data) {
+// Unirse a sala
+document.getElementById("joinRoom").addEventListener("click", () => {
+  const roomId = prompt("Enter room ID:");
+  socket.emit("joinRoom", { roomId });
+});
 
-    console.log(data)
+socket.on("roomJoined", (data) => {
+  const roomId = data.roomId;
+  console.log("Joined room:", roomId);
+});
 
-})
+socket.on("roomError", (data) => {
+  const message = data.message;
+  alert(message);
+});
 
+// Agregar pregunta
+document.getElementById("addQuestion").addEventListener("click", () => {
+  const roomId = prompt("Enter room ID:");
+  const question = prompt("Enter question:");
+  socket.emit("addQuestion", { roomId, question });
+});
+
+socket.on("questionAdded", (data) => {
+  const question = data.question;
+  console.log("Question added:", question);
+});
