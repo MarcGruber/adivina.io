@@ -15,16 +15,39 @@ const io = new Server(httpServer, {
 });
 
 
-let rooms = {};
+let usuariosConectados = []
+
+let indiceQuiz = 0;
+let intervalID = setInterval(() => {
+    lanzarPregunta()
+}, 10000);
+const lanzarPregunta = () => {
+    if(indiceQuiz < preguntes.preguntas.length){
+    console.log(preguntes.preguntas[indiceQuiz].pregunta)
+    indiceQuiz++
+    } else {
+        clearInterval(intervalID)
+    }
+}
+
+
 
 io.on("connection", (socket) => {
-
-    socket.emit('preguntes',preguntes)
-
+    
+    
     console.log('the user '+socket.id+ ' is connected')
-    socket.on('message', (msg) => {
-        socket.broadcast.emit('msg', msg)
+    socket.on('name', (name) => {
+        usuariosConectados.push({
+            name,
+            puntuacion : 0
+        })
+        socket.emit('preguntes',preguntes)
+        socket.broadcast.emit('usuarios', usuariosConectados)
+        socket.emit('usuarios', usuariosConectados)
+        console.log(usuariosConectados)
+        // socket.broadcast.emit('msg', msg)
     })
+
 
 });
 

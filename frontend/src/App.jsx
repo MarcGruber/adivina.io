@@ -8,7 +8,7 @@ function App() {
   const [message, setMessage] = useState('')
   const handleSubmit = (e) => {
     e.preventDefault()
-    socket.emit('message', message)
+    socket.emit('name', message)
     setMessage('')
   }
 
@@ -17,9 +17,11 @@ function App() {
       console.log(variable)
     }
     socket.on('preguntes', recieveVariable)
+    socket.on('usuarios', recieveVariable)
 
     return () => {
       socket.off('preguntes', recieveVariable)
+      socket.on('usuarios', recieveVariable)
     }
   },[])
 
