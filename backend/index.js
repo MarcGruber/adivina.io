@@ -20,7 +20,6 @@ let pregunta;
 const lanzarPregunta = (intervalID, room) => {
     if ( rooms[room].indiceQuiz < preguntes.preguntas.length) {
         rooms[room].pregunta = preguntes.preguntas[rooms[room].indiceQuiz]
-        console.log(rooms[room])
         rooms[room].indiceQuiz++
     } else {
         clearInterval(intervalID)
@@ -55,7 +54,7 @@ io.on("connection", (socket) => {
             lanzarPregunta(intervalID, room)
             socket.emit('pregunta', rooms[room].pregunta)
             socket.broadcast.emit('pregunta', rooms[room].pregunta)
-        }, 10000);
+        }, 5000);
     }
     });
 
