@@ -9,50 +9,73 @@ const httpServer = createServer(app);
 
 
 const io = new Server(httpServer, {
-    cors : {
+    cors: {
         origin: '*'
     }
 });
 
-
-let usuariosConectados = []
-
 let indiceQuiz = 0;
-let intervalID = setInterval(() => {
-    lanzarPregunta()
-}, 10000);
-const lanzarPregunta = () => {
-    if(indiceQuiz < preguntes.preguntas.length){
-    console.log(preguntes.preguntas[indiceQuiz].pregunta)
-    indiceQuiz++
+let pregunta;
+const lanzarPregunta = (intervalID) => {
+    if (indiceQuiz < preguntes.preguntas.length) {
+        pregunta = preguntes.preguntas[indiceQuiz]
+        indiceQuiz++
     } else {
         clearInterval(intervalID)
     }
 }
 
-
+const rooms = {}
+try {
+    
 
 io.on("connection", (socket) => {
-    
-    
-    console.log('the user '+socket.id+ ' is connected')
-    socket.on('name', (name) => {
-        usuariosConectados.push({
-            name,
-            puntuacion : 0
-        })
-        socket.emit('preguntes',preguntes)
-        socket.broadcast.emit('usuarios', usuariosConectados)
-        socket.emit('usuarios', usuariosConectados)
-        console.log(usuariosConectados)
-        // socket.broadcast.emit('msg', msg)
-    })
 
+    socket.on('createRoom', (callback) => {
+        const roomId = new Date().getTime();
+        rooms[roomId] = {
+            players: [socket],
+            gameStarted: false
+        };
+        socket.join(roomId);
+        callback(roomId);
+    });
 
+    socket.on('startGame', (room) => {
+        if (rooms[room] && !rooms[room].gameStarted) {
+        rooms[room].gameStarted = true
+        let intervalID = setInterval(() => {
+            lanzarPregunta(intervalID)
+            socket.emit('pregunta', pregunta)
+            console.log(pregunta)
+            socket.broadcast.emit('pregunta', pregunta)
+        }, 10000);
+    }
+    });
+
+    socket.on('joinRoom', (roomId, username, callback) => {
+        try {
+            const room = rooms[roomId];
+
+            if (room && !room.gameStarted) {
+                room.players.push({ socket: socket, name: username });
+                socket.join(roomId);
+                callback(true);
+            } else {
+                callback(false);
+            }
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+    );
 });
+} catch (error) {
+   console.log(error) 
+}
 
-
-httpServer.listen(3000, ()=>
+httpServer.listen(3000, () =>
     console.log(`Server listening at http://localhost:3000`)
 );
 
