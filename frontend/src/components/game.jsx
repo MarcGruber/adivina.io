@@ -38,7 +38,7 @@ export function TriviaGame(props) {
         )
     } else {
         return (
-            <h1>Cargando....</h1>
+            <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
         )
     }
 

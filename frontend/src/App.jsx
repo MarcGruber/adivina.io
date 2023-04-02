@@ -16,7 +16,9 @@ function App() {
     
     });
   };
-
+  socket.on('gameStarted', () => {
+    console.log('EL JUEGO HA EMPEZADO')
+});
   const joinRoom = (roomId, username) => {
     socket.emit('joinRoom', roomId, username, (success) => {
       if (success) {
@@ -30,6 +32,7 @@ function App() {
   
 
   const startGame = () => {
+    console.log(room)
     socket.emit('startGame', room);
     setGameStarted(true);
   };

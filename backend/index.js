@@ -24,6 +24,9 @@ const lanzarPregunta = (intervalID) => {
         clearInterval(intervalID)
     }
 }
+const corregirRespuestas = () => {
+    // responde todas las respuestas
+}
 
 const rooms = {}
 try {
@@ -35,7 +38,8 @@ io.on("connection", (socket) => {
         const roomId = new Date().getTime();
         rooms[roomId] = {
             players: [socket],
-            gameStarted: false
+            gameStarted: false,
+            owner: socket.id
         };
         socket.join(roomId);
         callback(roomId);
