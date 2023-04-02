@@ -13,12 +13,12 @@ function App() {
   const createRoom = () => {
     socket.emit('createRoom', (roomId) => {
       setRoom(roomId);
-    
+
     });
   };
   socket.on('gameStarted', () => {
-    console.log('EL JUEGO HA EMPEZADO')
-});
+    setGameStarted(true)
+  });
   const joinRoom = (roomId, username) => {
     socket.emit('joinRoom', roomId, username, (success) => {
       if (success) {
@@ -29,7 +29,7 @@ function App() {
       }
     });
   };
-  
+
 
   const startGame = () => {
     console.log(room)
@@ -49,16 +49,16 @@ function App() {
       {joiningRoom && (
         <JoinRoom onJoin={joinRoom} />
       )}
-      {room && !gameStarted && (
+      {room && !joiningRoom && !gameStarted &&  (
         <>
-        <h2>ID de la sala: {room}</h2>
-        <button onClick={startGame}>Empezar juego</button>
+          <h2>ID de la sala: {room}</h2>
+          <button onClick={startGame}>Empezar juego</button>
         </>
       )}
       {gameStarted && (
         <>
-        <h3>Juego Empezado</h3>
-        <TriviaGame roomId={room}/>
+          <h3>Juego Empezado</h3>
+          <TriviaGame roomId={room} />
         </>
       )}
     </div>

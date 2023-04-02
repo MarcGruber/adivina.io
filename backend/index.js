@@ -18,9 +18,10 @@ const rooms = {}
 
 let pregunta;
 const lanzarPregunta = (intervalID, room) => {
-    if ( rooms[room].indiceQuiz < preguntes.preguntas.length) {
+    if (rooms[room].indiceQuiz < preguntes.preguntas.length) {
         rooms[room].pregunta = preguntes.preguntas[rooms[room].indiceQuiz]
         rooms[room].indiceQuiz++
+        io.to(room).emit('pregunta', pregunta);
     } else {
         clearInterval(intervalID)
     }
@@ -30,54 +31,57 @@ const corregirRespuestas = () => {
 }
 
 try {
-    
 
-io.on("connection", (socket) => {
 
-    socket.on('createRoom', (callback) => {
-        const roomId = new Date().getTime();
-        rooms[roomId] = {
-            players: [socket],
-            gameStarted: false,
-            owner: socket.id,
-            indiceQuiz : 0,
-            pregunta : ''
-        };
-        socket.join(roomId);
-        callback(roomId);
-    });
+    io.on("connection", (socket) => {
 
-    socket.on('startGame', (room) => {
-        if (rooms[room] && !rooms[room].gameStarted) {
-        rooms[room].gameStarted = true
-        let intervalID = setInterval(() => {
-            lanzarPregunta(intervalID, room)
-            socket.emit('pregunta', rooms[room].pregunta)
-            socket.broadcast.emit('pregunta', rooms[room].pregunta)
-        }, 5000);
-    }
-    });
+        socket.on('createRoom', (callback) => {
+            const roomId = new Date().getTime();
+            rooms[roomId] = {
+                players: [socket],
+                gameStarted: false,
+                owner: socket.id,
+                indiceQuiz: 0,
+                pregunta: ''
+            };
+            socket.join(roomId);
+            callback(roomId);
+        });
 
-    socket.on('joinRoom', (roomId, username, callback) => {
-        try {
-            const room = rooms[roomId];
-
-            if (room && !room.gameStarted) {
-                room.players.push({ socket: socket, name: username });
-                socket.join(roomId);
-                callback(true);
-            } else {
-                callback(false);
+        socket.on('startGame', (room) => {
+            if(rooms[room].owner == socket.id){
+            if (rooms[room] && !rooms[room].gameStarted) {
+                rooms[room].gameStarted = true
+                socket.broadcast.emit('gameStarted', true)
+                let intervalID = setInterval(() => {
+                    lanzarPregunta(intervalID, room)
+                    socket.emit('pregunta', rooms[room].pregunta)
+                    socket.broadcast.emit('pregunta', rooms[room].pregunta)
+                }, 5000);
             }
         }
-        catch (error) {
-            console.log(error)
+        });
+
+        socket.on('joinRoom', (roomId, username, callback) => {
+            try {
+                const room = rooms[roomId];
+
+                if (room && !room.gameStarted) {
+                    room.players.push({ socket: socket, name: username });
+                    socket.join(roomId);
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            }
+            catch (error) {
+                console.log(error)
+            }
         }
-    }
-    );
-});
+        );
+    });
 } catch (error) {
-   console.log(error) 
+    console.log(error)
 }
 
 httpServer.listen(3000, () =>
