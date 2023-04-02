@@ -14,12 +14,14 @@ const io = new Server(httpServer, {
     }
 });
 
-let indiceQuiz = 0;
+const rooms = {}
+
 let pregunta;
-const lanzarPregunta = (intervalID) => {
-    if (indiceQuiz < preguntes.preguntas.length) {
-        pregunta = preguntes.preguntas[indiceQuiz]
-        indiceQuiz++
+const lanzarPregunta = (intervalID, room) => {
+    if ( rooms[room].indiceQuiz < preguntes.preguntas.length) {
+        rooms[room].pregunta = preguntes.preguntas[rooms[room].indiceQuiz]
+        console.log(rooms[room])
+        rooms[room].indiceQuiz++
     } else {
         clearInterval(intervalID)
     }
@@ -28,7 +30,6 @@ const corregirRespuestas = () => {
     // responde todas las respuestas
 }
 
-const rooms = {}
 try {
     
 
@@ -39,7 +40,9 @@ io.on("connection", (socket) => {
         rooms[roomId] = {
             players: [socket],
             gameStarted: false,
-            owner: socket.id
+            owner: socket.id,
+            indiceQuiz : 0,
+            pregunta : ''
         };
         socket.join(roomId);
         callback(roomId);
@@ -49,10 +52,9 @@ io.on("connection", (socket) => {
         if (rooms[room] && !rooms[room].gameStarted) {
         rooms[room].gameStarted = true
         let intervalID = setInterval(() => {
-            lanzarPregunta(intervalID)
-            socket.emit('pregunta', pregunta)
-            console.log(pregunta)
-            socket.broadcast.emit('pregunta', pregunta)
+            lanzarPregunta(intervalID, room)
+            socket.emit('pregunta', rooms[room].pregunta)
+            socket.broadcast.emit('pregunta', rooms[room].pregunta)
         }, 10000);
     }
     });
