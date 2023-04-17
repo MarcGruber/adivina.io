@@ -29,57 +29,83 @@ const lanzarPregunta = (intervalID, room) => {
 const corregirRespuestas = () => {
     // responde todas las respuestas
 }
-
 try {
+    
+    const usersInRooms = {};
+    app.get('/users/:room', (req, res) => {
+        const room = req.params.room;
+      
+        if (!usersInRooms[room]) {
+          res.status(404).send('Sala no encontrada');
+        } else {
+          res.json(usersInRooms[room]);
+        }
+      });
 
+      const games = {}; // aquí se guardará la información de cada juego
 
-    io.on("connection", (socket) => {
-
-        socket.on('createRoom', (callback) => {
-            const roomId = new Date().getTime();
-            rooms[roomId] = {
-                players: [socket],
-                gameStarted: false,
-                owner: socket.id,
-                indiceQuiz: 0,
-                pregunta: ''
+      io.on('connection', (socket) => {
+        socket.on('join', ({ username, room }) => {
+          socket.join(room);
+      
+          // si el juego no existe, lo creamos con la información necesaria
+          if (!games[room]) {
+            games[room] = {
+              users: [username],
+              questions: preguntes.preguntas,
+              started: false,
+              currentQuestionIndex: -1,
             };
-            socket.join(roomId);
-            callback(roomId);
+          } else {
+            // si el juego ya existe, añadimos al usuario a la lista
+            games[room].users.push(username);
+          }
+      
+          io.to(room).emit('message', {
+            username: 'Sistema',
+            text: `${username} se unió a la sala`,
+          });
         });
-
+      
         socket.on('startGame', (room) => {
-            if(rooms[room].owner == socket.id){
-            if (rooms[room] && !rooms[room].gameStarted) {
-                rooms[room].gameStarted = true
-                socket.broadcast.emit('gameStarted', true)
-                let intervalID = setInterval(() => {
-                    lanzarPregunta(intervalID, room)
-                    socket.emit('pregunta', rooms[room].pregunta)
-                    socket.broadcast.emit('pregunta', rooms[room].pregunta)
-                }, 5000);
-            }
-        }
+          const game = games[room];
+      
+          if (game && !game.started) {
+              game.started = true;
+              game.currentQuestionIndex = 0;
+              io.to(room).emit('gameStarted', true);
+            // aquí se lanza el intervalo para ir enviando las preguntas a los usuarios
+            const intervalId = setInterval(() => {
+              if (game.currentQuestionIndex >= game.questions.length) {
+                clearInterval(intervalId);
+              } else {
+                const question = game.questions[game.currentQuestionIndex];
+                console.log(question)
+                io.to(room).emit('pregunta', question);
+                game.currentQuestionIndex++;
+              }
+            }, 5000);
+          }
         });
-
-        socket.on('joinRoom', (roomId, username, callback) => {
-            try {
-                const room = rooms[roomId];
-
-                if (room && !room.gameStarted) {
-                    room.players.push({ socket: socket, name: username });
-                    socket.join(roomId);
-                    callback(true);
-                } else {
-                    callback(false);
-                }
+      
+        socket.on('disconnect', () => {
+          // Eliminar al usuario de la lista de usuarios en la sala al desconectarse
+          const rooms = Object.keys(socket.rooms).filter((room) => room !== socket.id);
+          rooms.forEach((room) => {
+            if (games[room]) {
+              games[room].users = games[room].users.filter(
+                (username) => username !== socket.username
+              );
+      
+              io.to(room).emit('message', {
+                username: 'Sistema',
+                text: `${socket.username} abandonó la sala`,
+              });
             }
-            catch (error) {
-                console.log(error)
-            }
-        }
-        );
-    });
+          });
+        });
+      });
+      
 } catch (error) {
     console.log(error)
 }
