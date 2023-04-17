@@ -78,8 +78,29 @@ function ChatRoom() {
 
       {isGameStarted ? (
         <>
-        {console.log('patata')}
-        <TriviaGame roomId={room} />
+
+          {console.log('patata')}
+          {
+            
+            currentQuestion.pregunta ? <TriviaGame props={{roomId: room, pregunta:currentQuestion}} /> : ''
+          }
+          
+          {/* {
+            (
+            //   <>
+            // <h1>
+            //   {currentQuestion.pregunta ? currentQuestion.pregunta : ''}
+            // </h1>
+            // <ul>
+            //   <li><button>{currentQuestion.opciones[0].opcion}</button></li>
+            //   <li><button>{currentQuestion.opciones[1].opcion}</button></li>
+            // </ul>
+            // </>
+            )
+
+
+          } */}
+
         </>
       ) : (
         <button onClick={handleStartGame}>Comenzar juego</button>
