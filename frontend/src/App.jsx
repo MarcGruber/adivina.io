@@ -12,17 +12,16 @@ function ChatRoom() {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [answer, setAnswer] = useState('');
-  const [activeForm, setActiveForm] = useState("room");
+  const [activeForm, setActiveForm] = useState('room');
 
-  const handleFormUser=() =>{
-    setActiveForm("room")
-    }
+  const handleFormUser = () => {
+    setActiveForm('room');
+  };
 
-  const handleFormSala=() =>{
-    setActiveForm("user")
-  }
-  useEffect(() =>{},[activeForm]);
-
+  const handleFormSala = () => {
+    setActiveForm('user');
+  };
+  
   useEffect(() => {
     // Escuchar eventos del servidor
     socket.on('message', (message) => {
@@ -35,15 +34,13 @@ function ChatRoom() {
 
     socket.on('pregunta', (pregunta) => {
       setCurrentQuestion(pregunta);
-      console.log(pregunta.opciones[1])
+      console.log(pregunta.opciones[1]);
     });
-
   }, []);
-
 
   const handleJoinRoom = (event) => {
     event.preventDefault();
-    console.log(room)
+    console.log(room);
     socket.emit('join', { username, room });
   };
 
@@ -55,7 +52,7 @@ function ChatRoom() {
 
   const handleStartGame = (event) => {
     event.preventDefault();
-    console.log(room)
+    console.log(room);
     socket.emit('startGame', room);
   };
 
@@ -66,62 +63,47 @@ function ChatRoom() {
   };
 
   return (
-    <div className={activeForm === 'room' ? 'form-container sign-up-container' : 'form-container sign-up-container hidden'}>
-      <form onSubmit={handleJoinRoom}>
-        <label>
-          Nombre de usuario:
-          <input
-            type="text"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-          />
-        </label>
-        <label>
-          Sala:
-          <input
-            type="text"
-            value={room}
-            onChange={(event) => setRoom(event.target.value)}
-          />
-        </label>
-        <button type="submit" onClick={ handleFormUser}>Unirse a la sala</button>
-      </form>
+    <div className="form-container sign-up-container">
+      {activeForm === 'room' ? (
+        <form onSubmit={handleJoinRoom}>
+          <label>
+            Nombre de usuario:
+            <input
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+            />
+          </label>
+          <label>
+            Sala:
+            <input
+              type="text"
+              value={room}
+              onChange={(event) => setRoom(event.target.value)}
+            />
+          </label>
+          <button type="submit" onClick={handleFormUser}>
+            Unirse a la sala
+          </button>
+        </form>
+      ) : null}
 
       {isGameStarted ? (
         <>
-
           {console.log('patata')}
-          {
-            
-            currentQuestion.pregunta ? <TriviaGame props={{roomId: room, pregunta:currentQuestion}} /> : ''
-          }
-          
-          {/* {
-            (
-            //   <>
-            // <h1>
-            //   {currentQuestion.pregunta ? currentQuestion.pregunta : ''}
-            // </h1>
-            // <ul>
-            //   <li><button>{currentQuestion.opciones[0].opcion}</button></li>
-            //   <li><button>{currentQuestion.opciones[1].opcion}</button></li>
-            // </ul>
-            // </>
-            )
-
-
-          } */}
-
+          {currentQuestion.pregunta ? (
+            <TriviaGame props={{ roomId: room, pregunta: currentQuestion }} />
+          ) : null}
         </>
       ) : (
-        
-        <div className={activeForm === 'room' ? 'form-container sign-up-container' : 'form-container sign-up-container hidden'}>
-          <div onClick={handleFormSala} >
-        <button onClick={handleStartGame}>Comenzar juego</button>
-        </div>
+        <div className="form-container sign-up-container">
+          {activeForm === 'room' ? (
+            <div onClick={handleFormSala}>
+              <button onClick={handleStartGame}>Comenzar juego</button>
+            </div>
+          ) : null}
         </div>
       )}
-
     </div>
   );
 }
