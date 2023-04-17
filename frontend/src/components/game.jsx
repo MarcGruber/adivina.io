@@ -26,7 +26,6 @@ export function TriviaGame(props) {
     //     alert('Respuesta incorrecta')
     //   }
     // }
-
     // socket.on('respuestaCorrecta', respuestaCorrecta)
 
     // return () => {
