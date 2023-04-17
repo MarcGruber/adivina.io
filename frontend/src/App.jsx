@@ -95,14 +95,14 @@ function ChatRoom() {
         </ul>
       </div>
 
-      <form onSubmit={handleSendMessage}>
+      {/* <form onSubmit={handleSendMessage}>
         <input
           type="text"
           value={message}
           onChange={(event) => setMessage(event.target.value)}
         />
         <button type="submit">Enviar mensaje</button>
-      </form>
+      </form> */}
     </div>
   );
 }
