@@ -94,7 +94,7 @@ function ChatRoom() {
         </>
       ) : (
         
-        <div className={activeForm === 'room' ? 'form-container sign-up-container' : 'form-container sign-up-container hidden'}>
+        <div className={activeForm === ' ' ? 'form-container sign-up-container' : 'form-container sign-up-container hidden'}>
           <div onClick={handleFormSala} >
         <button onClick={handleStartGame}>Comenzar juego</button>
         </div>
