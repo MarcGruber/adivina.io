@@ -47,7 +47,7 @@ try {
       io.on('connection', (socket) => {
         socket.on('join', ({ username, room }) => {
           socket.join(room);
-      
+          console.log(username)
           // si el juego no existe, lo creamos con la información necesaria
           if (!games[room]) {
             games[room] = {

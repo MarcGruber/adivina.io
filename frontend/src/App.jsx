@@ -25,10 +25,11 @@ function ChatRoom() {
 
     socket.on('pregunta', (pregunta) => {
       setCurrentQuestion(pregunta);
-      console.log(pregunta)
+      console.log(pregunta.opciones[1])
     });
 
   }, []);
+
 
   const handleJoinRoom = (event) => {
     event.preventDefault();
@@ -78,31 +79,31 @@ function ChatRoom() {
 
       {isGameStarted ? (
         <>
-        {console.log('patata')}
-        <TriviaGame roomId={room} />
+          {console.log('patata')}
+          {
+            currentQuestion.pregunta ? <TriviaGame props={{roomId: room, pregunta:currentQuestion}} /> : null
+          }
+          
+          {/* {
+            (
+            //   <>
+            // <h1>
+            //   {currentQuestion.pregunta ? currentQuestion.pregunta : ''}
+            // </h1>
+            // <ul>
+            //   <li><button>{currentQuestion.opciones[0].opcion}</button></li>
+            //   <li><button>{currentQuestion.opciones[1].opcion}</button></li>
+            // </ul>
+            // </>
+            )
+
+
+          } */}
         </>
       ) : (
         <button onClick={handleStartGame}>Comenzar juego</button>
       )}
 
-      <div>
-        <ul>
-          {messages.map((message, index) => (
-            <li key={index}>
-              {message.username}: {message.text}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <form onSubmit={handleSendMessage}>
-        <input
-          type="text"
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-        />
-        <button type="submit">Enviar mensaje</button>
-      </form>
     </div>
   );
 }
