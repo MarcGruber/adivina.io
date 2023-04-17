@@ -12,6 +12,16 @@ function ChatRoom() {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+  const [activeForm, setActiveForm] = useState("room");
+
+  const handleFormUser=() =>{
+    setActiveForm("room")
+    }
+
+  const handleFormSala=() =>{
+    setActiveForm("user")
+  }
+  useEffect(() =>{},[activeForm]);
 
   useEffect(() => {
     // Escuchar eventos del servidor
@@ -56,7 +66,7 @@ function ChatRoom() {
   };
 
   return (
-    <div>
+    <div className={activeForm === 'room' ? 'form-container sign-up-container' : 'form-container sign-up-container hidden'}>
       <form onSubmit={handleJoinRoom}>
         <label>
           Nombre de usuario:
@@ -74,11 +84,12 @@ function ChatRoom() {
             onChange={(event) => setRoom(event.target.value)}
           />
         </label>
-        <button type="submit">Unirse a la sala</button>
+        <button type="submit" onClick={ handleFormUser}>Unirse a la sala</button>
       </form>
 
       {isGameStarted ? (
         <>
+
           {console.log('patata')}
           {
             currentQuestion.pregunta ? <TriviaGame props={{roomId: room, pregunta:currentQuestion}} /> : null
@@ -99,9 +110,15 @@ function ChatRoom() {
 
 
           } */}
+
         </>
       ) : (
+        
+        <div className={activeForm === 'room' ? 'form-container sign-up-container' : 'form-container sign-up-container hidden'}>
+          <div onClick={handleFormSala} >
         <button onClick={handleStartGame}>Comenzar juego</button>
+        </div>
+        </div>
       )}
 
     </div>

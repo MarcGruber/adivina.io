@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import '../App.css'
+import '../index.css'
 const socket = io('http://localhost:3000')
+
 
 export function SendName() {
     const [message, setMessage] = useState('')
