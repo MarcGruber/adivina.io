@@ -5,11 +5,10 @@ import '../index.css'
 const socket = io('http://localhost:3000')
 
 export function TriviaGame(props) {
-  const { roomId } = props
+  const { roomId, pregunta } = props.props
   const [response, setResponse] = useState('')
-  const [pregunta, setPregunta] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-
+  console.log(`h1`)
   const handleOptionClick = (optionNumber) => {
     setIsLoading(true)
     socket.emit('response', pregunta.opciones[optionNumber].opcion)
@@ -17,28 +16,22 @@ export function TriviaGame(props) {
   }
 
   useEffect(() => {
-    const recieveVariable = variable => {
-      console.log(variable)
-      setPregunta(variable)
-      setIsLoading(false)
-    }
-    socket.on('pregunta', recieveVariable)
 
-    const respuestaCorrecta = (respuesta) => {
-      setIsLoading(false)
-      if (respuesta) {
-        alert('Respuesta correcta!')
-      } else {
-        alert('Respuesta incorrecta')
-      }
-    }
 
-    socket.on('respuestaCorrecta', respuestaCorrecta)
+    // const respuestaCorrecta = (respuesta) => {
+    //   setIsLoading(false)
+    //   if (respuesta) {
+    //     alert('Respuesta correcta!')
+    //   } else {
+    //     alert('Respuesta incorrecta')
+    //   }
+    // }
 
-    return () => {
-      socket.off('pregunta', recieveVariable)
-      socket.off('respuestaCorrecta', respuestaCorrecta)
-    }
+    // socket.on('respuestaCorrecta', respuestaCorrecta)
+
+    // return () => {
+    //   socket.off('respuestaCorrecta', respuestaCorrecta)
+    // }
   }, [])
 
   if (pregunta.pregunta) {
