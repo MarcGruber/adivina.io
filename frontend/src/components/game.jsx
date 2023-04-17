@@ -8,7 +8,8 @@ export function TriviaGame(props) {
   const { roomId, pregunta } = props.props
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  console.log(`h1`)
+  const [respuestaCorrecta, setRespuestaCorrecta] = useState(false) // Nuevo estado para indicar si la respuesta es correcta
+
   const handleOptionClick = (optionNumber) => {
     setIsLoading(true)
     socket.emit('response', pregunta.opciones[optionNumber].opcion)
@@ -16,21 +17,14 @@ export function TriviaGame(props) {
   }
 
   useEffect(() => {
+    socket.on('respuestaCorrecta', (respuesta) => {
+      setIsLoading(false)
+      setRespuestaCorrecta(respuesta) // Actualizar el estado con la respuesta correcta
+    })
 
-
-    // const respuestaCorrecta = (respuesta) => {
-    //   setIsLoading(false)
-    //   if (respuesta) {
-    //     alert('Respuesta correcta!')
-    //   } else {
-    //     alert('Respuesta incorrecta')
-    //   }
-    // }
-    // socket.on('respuestaCorrecta', respuestaCorrecta)
-
-    // return () => {
-    //   socket.off('respuestaCorrecta', respuestaCorrecta)
-    // }
+    return () => {
+      socket.off('respuestaCorrecta')
+    }
   }, [])
 
   if (pregunta.pregunta) {
@@ -46,6 +40,7 @@ export function TriviaGame(props) {
           </>
         }
         {isLoading && <div className="lds-ring"><div></div><div></div><div></div><div></div></div>}
+        {respuestaCorrecta && <div>Respuesta correcta!</div>} {/* Mostrar el mensaje de respuesta correcta */}
       </>
     )
   } else {

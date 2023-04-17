@@ -22,6 +22,17 @@ const lanzarPregunta = (intervalID, room) => {
         rooms[room].pregunta = preguntes.preguntas[rooms[room].indiceQuiz]
         rooms[room].indiceQuiz++
         io.to(room).emit('pregunta', pregunta);
+       
+     socket.on('respuesta', (respuesta) => {
+            const preguntaActual = rooms[room].pregunta;
+            if (respuesta === preguntaActual.respuesta) {
+              // La respuesta es correcta, hacer algo aquí
+              console.log('Respuesta correcta');
+            } else {
+              // La respuesta es incorrecta, hacer algo aquí
+              console.log('Respuesta incorrecta');
+            }
+          });
     } else {
         clearInterval(intervalID)
     }
