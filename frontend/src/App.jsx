@@ -92,7 +92,8 @@ function ChatRoom() {
 
           {console.log('patata')}
           {
-            currentQuestion.pregunta ? <TriviaGame props={{roomId: room, pregunta:currentQuestion}} /> : null
+            
+            currentQuestion.pregunta ? <TriviaGame props={{roomId: room, pregunta:currentQuestion}} /> : ''
           }
           
           {/* {
