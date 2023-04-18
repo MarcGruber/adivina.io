@@ -34,7 +34,6 @@ function ChatRoom() {
 
     socket.on('pregunta', (pregunta) => {
       setCurrentQuestion(pregunta);
-      console.log(pregunta.opciones[1]);
     });
   }, []);
 
@@ -91,7 +90,7 @@ function ChatRoom() {
       {isGameStarted ? (
         <>
           {console.log('patata')}
-          {currentQuestion.pregunta ? (
+          {currentQuestion ? (
             <TriviaGame props={{ roomId: room, pregunta: currentQuestion }} />
           ) : null}
         </>
