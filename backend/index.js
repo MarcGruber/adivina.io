@@ -17,15 +17,7 @@ const io = new Server(httpServer, {
 const rooms = {}
 
 let pregunta;
-const lanzarPregunta = (intervalID, room) => {
-    if (rooms[room].indiceQuiz < preguntes.preguntas.length) {
-        rooms[room].pregunta = preguntes.preguntas[rooms[room].indiceQuiz]
-        rooms[room].indiceQuiz++
-        io.to(room).emit('pregunta', pregunta);
-    } else {
-        clearInterval(intervalID)
-    }
-}
+
 const corregirRespuestas = () => {
     // responde todas las respuestas
 }
@@ -54,7 +46,7 @@ try {
               users: [username],
               questions: preguntes.preguntas,
               started: false,
-              currentQuestionIndex: -1,
+              currentQuestionIndex: 0,
             };
           } else {
             // si el juego ya existe, añadimos al usuario a la lista
@@ -72,22 +64,38 @@ try {
       
           if (game && !game.started) {
               game.started = true;
-              game.currentQuestionIndex = 0;
+              game.currentQuestionIndex = -1;
               io.to(room).emit('gameStarted', true);
             // aquí se lanza el intervalo para ir enviando las preguntas a los usuarios
             const intervalId = setInterval(() => {
               if (game.currentQuestionIndex >= game.questions.length) {
                 clearInterval(intervalId);
               } else {
-                const question = game.questions[game.currentQuestionIndex];
-                console.log(question)
-                io.to(room).emit('pregunta', question);
                 game.currentQuestionIndex++;
+                const question = game.questions[game.currentQuestionIndex];
+                io.to(room).emit('pregunta', question);
               }
             }, 5000);
+            
           }
         });
-      
+
+        socket.on('respuesta', ({optionNumber, roomId}) => {
+          try {
+            
+            const game = games[roomId];
+            const preguntaActual = game.questions[game.currentQuestionIndex]
+            console.log(preguntaActual)
+          console.log(preguntaActual.opciones[optionNumber].correcta)
+          if(preguntaActual.opciones[optionNumber].correcta === true ){
+              console.log('respuesta correcta')
+          } else {
+            console.log('respuesta incorrecta')
+          }
+        } catch (error) {
+         console.log(error)   
+        }
+        });
         socket.on('disconnect', () => {
           // Eliminar al usuario de la lista de usuarios en la sala al desconectarse
           const rooms = Object.keys(socket.rooms).filter((room) => room !== socket.id);
