@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { TriviaGame } from './components/game';
 
-const socket = io('http://localhost:3000'); // Establecer la conexión con el servidor de Socket.io
+const socket = io('http://192.168.85.36:3000'); // Establecer la conexión con el servidor de Socket.io
 
 function ChatRoom() {
   const [username, setUsername] = useState('');
@@ -63,7 +63,7 @@ function ChatRoom() {
 
   return (
     <div className="form-container sign-up-container">
-      {activeForm === 'room' ? (
+      {!isGameStarted ? (
         <form onSubmit={handleJoinRoom}>
           <label>
             Nombre de usuario:
@@ -91,7 +91,7 @@ function ChatRoom() {
         <>
           {console.log('patata')}
           {currentQuestion ? (
-            <TriviaGame props={{ roomId: room, pregunta: currentQuestion }} />
+            <TriviaGame props={{ roomId: room, pregunta: currentQuestion, user : username }} />
           ) : null}
         </>
       ) : (
