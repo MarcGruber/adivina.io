@@ -18,8 +18,33 @@ const rooms = {}
 
 let pregunta;
 
-const corregirRespuestas = () => {
-    // responde todas las respuestas
+const corregirRespuestas = (room) => {
+  // responde todas las respuestas
+  const game = games[room];
+  const correctAnswers = game.questions.filter((pregunta, index) => {
+      return pregunta.opciones[pregunta.respuesta].correcta === true;
+  });
+  const userScores = {};
+  game.users.forEach((user) => {
+      userScores[user] = 0;
+  });
+  game.users.forEach((user) => {
+      game.questions.forEach((pregunta, index) => {
+          if (pregunta.respuestaUsuario && pregunta.respuestaUsuario[user] === pregunta.respuesta) {
+              userScores[user]++;
+          }
+      });
+  });
+  const ranking = Object.keys(userScores).sort((a, b) => {
+      return userScores[b] - userScores[a];
+  }).map((user, index) => {
+      return { username: user, score: userScores[user] };
+  });
+
+  // Emitir el ranking actualizado a todos los clientes en la sala
+  io.to(room).emit('ranking', ranking);
+
+  return ranking;
 }
 try {
     
@@ -112,7 +137,14 @@ try {
             }
           });
         });
+        socket.on('ranking', (room) => {
+          const ranking = corregirRespuestas(room);
+          io.to(room).emit('ranking', ranking);
+          console.log(room)
+        });
       });
+
+      
       
 } catch (error) {
     console.log(error)
