@@ -63,7 +63,7 @@ function ChatRoom() {
 
   return (
     <div className="form-container sign-up-container">
-      {activeForm === 'room' ? (
+      {!isGameStarted ? (
         <form onSubmit={handleJoinRoom}>
           <label>
             Nombre de usuario:
@@ -91,7 +91,7 @@ function ChatRoom() {
         <>
           {console.log('patata')}
           {currentQuestion ? (
-            <TriviaGame props={{ roomId: room, pregunta: currentQuestion }} />
+            <TriviaGame props={{ roomId: room, pregunta: currentQuestion, user : username }} />
           ) : null}
         </>
       ) : (

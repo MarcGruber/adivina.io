@@ -105,7 +105,7 @@ try {
           }
         });
 
-        socket.on('respuesta', ({optionNumber, roomId}) => {
+        socket.on('respuesta', ({user,optionNumber, roomId}) => {
           try {
             
             const game = games[roomId];
@@ -114,7 +114,19 @@ try {
           console.log(preguntaActual.opciones[optionNumber].correcta)
           if(preguntaActual.opciones[optionNumber].correcta === true ){
               console.log('respuesta correcta')
+              if(!ranking[user]){
+              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+              } else {
+                ranking[user].puntuacion += Date.now()+1
+                ranking[user].correctas ++ 
+              }
+              console.log(ranking)
           } else {
+            if(!ranking[user]){
+              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+              } else {
+                ranking[user].incorrectas ++ 
+              }
             console.log('respuesta incorrecta')
           }
         } catch (error) {

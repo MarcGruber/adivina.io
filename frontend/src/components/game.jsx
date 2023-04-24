@@ -5,16 +5,17 @@ import '../index.css'
 const socket = io('http://localhost:3000')
 
 export function TriviaGame(props) {
-  const { roomId, pregunta } = props.props
+  const { roomId, pregunta, user } = props.props
+  console.log(props.props)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [respuestaCorrecta, setRespuestaCorrecta] = useState(false) // Nuevo estado para indicar si la respuesta es correcta
 
-  const handleOptionClick = (optionNumber, roomId) => {
+  const handleOptionClick = (optionNumber, roomId, user) => {
     setIsLoading(true)
     console.log(roomId)
   
-    socket.emit('respuesta', {optionNumber, roomId})
+    socket.emit('respuesta', {optionNumber, roomId, user})
     setResponse('')
   }
   useEffect(()=>{
@@ -53,8 +54,8 @@ export function TriviaGame(props) {
           <>
             <h2>{pregunta.pregunta}</h2>
             <ul>
-              <li><button onClick={() => handleOptionClick(0, roomId)}>{pregunta.opciones[0].opcion}</button></li>
-              <li><button onClick={() => handleOptionClick(1, roomId)}>{pregunta.opciones[1].opcion}</button></li>
+              <li><button onClick={() => handleOptionClick(0, roomId, user)}>{pregunta.opciones[0].opcion}</button></li>
+              <li><button onClick={() => handleOptionClick(1, roomId, user)}>{pregunta.opciones[1].opcion}</button></li>
             </ul>
           </>
         }
