@@ -137,11 +137,41 @@ try {
             }
           });
         });
-        socket.on('ranking', (room) => {
-          const ranking = corregirRespuestas(room);
-          io.to(room).emit('ranking', ranking);
-          console.log(room)
+        socket.on("enviarPuntaje", ({ usuario, puntaje }) => {
+          // Agrega o actualiza el puntaje del usuario en la variable de puntajes
+          puntajes[usuario] = puntaje;
+      
+          // Actualiza el ranking y lo envía a todos los clientes conectados
+          actualizarRanking();
         });
+      
+        socket.on("solicitarRanking", () => {
+          // Envía el ranking actualizado al cliente que lo solicita
+          enviarRanking(socket);
+        });
+      
+        socket.on("disconnect", () => {
+          console.log("Usuario desconectado");
+        });
+      });
+      
+      const enviarRanking = (socket) => {
+        const ranking = Object.entries(puntajes)
+          .sort((a, b) => b[1] - a[1])
+          .map(([usuario, puntaje]) => ({ usuario, puntaje }));
+      
+        socket.emit("ranking", ranking);
+      };
+      
+      const actualizarRanking = () => {
+        io.emit("ranking", Object.entries(puntajes)
+          .sort((a, b) => b[1] - a[1])
+          .map(([usuario, puntaje]) => ({ usuario, puntaje }))
+        );
+      };
+      
+      io.listen(3000, () => {
+        console.log("Servidor iniciado");
       });
 
       
@@ -150,7 +180,7 @@ try {
     console.log(error)
 }
 
-httpServer.listen(3000, () =>
-    console.log(`Server listening at http://localhost:3000`)
-);
+// httpServer.listen(3000, () =>
+//     console.log(`Server listening at http://localhost:3000`)
+// );
 
