@@ -80,7 +80,7 @@ try {
 
         socket.on('respuesta', ({user,optionNumber, roomId}) => {
           try {
-            
+            console.log(ranking)
             const game = games[roomId];
             const preguntaActual = game.questions[game.currentQuestionIndex]
             console.log(preguntaActual)
