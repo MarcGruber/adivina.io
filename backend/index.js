@@ -5,6 +5,7 @@ const cors = require('cors')
 let preguntes = require('./json/react.json')
 const app = express();
 app.use(cors())
+
 const httpServer = createServer(app);
 
 console.log('update')
@@ -63,7 +64,10 @@ try {
           const {secondsNew, categoriaNew, room} = props
           seconds = (secondsNew || 7)
         
-          categoria = (categoriaNew || preguntes )
+          if(categoriaNew == 'animals'){
+            preguntes = require('./josn/animals')
+          }
+
           
         })
 
