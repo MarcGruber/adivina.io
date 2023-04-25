@@ -64,16 +64,34 @@ try {
               game.started = true;
               game.currentQuestionIndex = -1;
               io.to(room).emit('gameStarted', true);
+
             // aquí se lanza el intervalo para ir enviando las preguntas a los usuarios
+            
             const intervalId = setInterval(() => {
+              console.log('interval')
               if (game.currentQuestionIndex >= game.questions.length) {
+               
+              
+                 
+              
+                  // Ordenar el ranking por puntuación de mayor a menor
+                  const sortedRanking = Object.entries(ranking)
+                      .sort((a, b) => b[1].puntuacion - a[1].puntuacion);
+              
+                      console.log(sortedRanking)
+                  // Emitir evento con el ranking ordenado
+                  io.to(room).emit('ranking', sortedRanking);
+              
                 clearInterval(intervalId);
+
               } else {
                 game.currentQuestionIndex++;
                 const question = game.questions[game.currentQuestionIndex];
+                console.log(question)
                 io.to(room).emit('pregunta', question);
               }
             }, 5000);
+            
             
           }
         });
