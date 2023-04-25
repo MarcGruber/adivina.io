@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import '../App.css'
 import '../index.css'
-const socket = io('http://localhost:3000')
+const socket = io('http://192.168.85.36:3000')
 
 export function TriviaGame(props) {
   const { roomId, pregunta, user } = props.props
