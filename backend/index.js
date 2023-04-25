@@ -2,7 +2,7 @@ const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const cors = require('cors')
-const preguntes = require('./json/react.json')
+let preguntes = require('./json/react.json')
 const app = express();
 app.use(cors())
 const httpServer = createServer(app);
@@ -16,8 +16,10 @@ const io = new Server(httpServer, {
 
 const rooms = {}
 
-let pregunta;
 
+let seconds;
+let categoria;
+let room;
 const ranking = []
 try {
     
@@ -57,6 +59,14 @@ try {
           });
         });
       
+        socket.on('configuracion', (props)=>{
+          const {secondsNew, categoriaNew, room} = props
+          seconds = (secondsNew || 7)
+        
+          categoria = (categoriaNew || preguntes )
+          
+        })
+
         socket.on('startGame', (room) => {
           const game = games[room];
       
