@@ -1,0 +1,95 @@
+{
+    "preguntas": [
+        {
+            "pregunta": "¿En qué año se fundó el FC Barcelona?",
+            "opciones": [
+                {
+                    "opcion": "1899",
+                    "correcta": true
+                },
+                {
+                    "opcion": "1902",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Quién es el máximo goleador en la historia del FC Barcelona?",
+            "opciones": [
+                {
+                    "opcion": "Lionel Messi",
+                    "correcta": true
+                },
+                {
+                    "opcion": "César Rodríguez",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Cuántas veces ha ganado el FC Barcelona la Liga de Campeones de la UEFA?",
+            "opciones": [
+                {
+                    "opcion": "5",
+                    "correcta": true
+                },
+                {
+                    "opcion": "6",
+                    "correcta": true
+                }
+            ]
+        },
+        {
+            "pregunta": "¿En qué estadio juega el FC Barcelona sus partidos como local?",
+            "opciones": [
+                {
+                    "opcion": "Camp nou",
+                    "correcta": true
+                },
+                {
+                    "opcion": "Montilivi",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "Como se llama el estadio donde juega el barça atlètic",
+            "opciones": [
+                {
+                    "opcion": "Johan Cruyff",
+                    "correcta": true
+                },
+                {
+                    "opcion": "Mini estadi",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "Cuál es el himno oficial del FC Barcelona?",
+            "opciones": [
+                {
+                    "opcion": "'El Cant del Barça'",
+                    "correcta": true
+                },
+                {
+                    "opcion": "'Himno a la alegría'",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "Cuantos balones de oro tiene el FC Barcelona?",
+            "opciones": [
+                {
+                    "opcion": "14",
+                    "correcta": true
+                },
+                {
+                    "opcion": "12",
+                    "correcta": false
+                }
+            ]
+        }
+    ]
+}

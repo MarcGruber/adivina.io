@@ -2,7 +2,6 @@ const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const cors = require('cors')
-let preguntes = require('./json/react.json')
 const app = express();
 app.use(cors())
 
@@ -17,10 +16,19 @@ const io = new Server(httpServer, {
 
 const rooms = {}
 
+const recuperaPreguntas = (categoria) => {
+  let listapreguntas;
+  if (categoria === 'pokemon') {
+    listapreguntas = require('./json/pokemon.json');
+  } else if (categoria === 'barça') {
+    listapreguntas = require('./json/barça.json');
+  } else {
+    listapreguntas = require('./json/react.json');
+  }
 
-let seconds;
-let categoria;
-let room;
+  return listapreguntas.preguntas;
+}
+
 const ranking = []
 try {
     
@@ -38,16 +46,19 @@ try {
       const games = {}; // aquí se guardará la información de cada juego
 
       io.on('connection', (socket) => {
-        socket.on('join', ({ username, room }) => {
+        socket.on('join', ({ username, room, segundos, categoria }) => {
           socket.join(room);
           console.log(username)
           // si el juego no existe, lo creamos con la información necesaria
           if (!games[room]) {
+              let listapreguntas = recuperaPreguntas(categoria)
+            console.log(segundos, categoria)
             games[room] = {
               users: [username],
-              questions: preguntes.preguntas,
+              questions: listapreguntas,
               started: false,
               currentQuestionIndex: 0,
+              segundos : (segundos * 1000)
             };
           } else {
             // si el juego ya existe, añadimos al usuario a la lista
@@ -60,16 +71,6 @@ try {
           });
         });
       
-        socket.on('configuracion', (props)=>{
-          const {secondsNew, categoriaNew, room} = props
-          seconds = (secondsNew || 7)
-        
-          if(categoriaNew == 'animals'){
-            preguntes = require('./josn/animals')
-          }
-
-          
-        })
 
         socket.on('startGame', (room) => {
           const game = games[room];
@@ -85,9 +86,6 @@ try {
               console.log('interval')
               if (game.currentQuestionIndex >= game.questions.length) {
                
-              
-                 
-              
                   // Ordenar el ranking por puntuación de mayor a menor
                   const sortedRanking = Object.entries(ranking)
                       .sort((a, b) => b[1].puntuacion - a[1].puntuacion);
@@ -104,7 +102,7 @@ try {
                 console.log(question)
                 io.to(room).emit('pregunta', question);
               }
-            }, 5000);
+            }, game.segundos);
             
             
           }
