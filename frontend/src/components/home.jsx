@@ -12,9 +12,10 @@ export function ChatRoom() {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+  const [ranking, setRanking] = useState([]);
   const [activeForm, setActiveForm] = useState('room');
   const [categoria, setCategoria] = useState('react');
-const [segundos, setSegundos] = useState(10);
+  const [segundos, setSegundos] = useState(10);
 
 
   const handleFormUser = () => {
@@ -43,13 +44,15 @@ const [segundos, setSegundos] = useState(10);
         // Lógica para actualizar el ranking aquí
         // ...
         // Cuando se actualiza el ranking, se envía a los clientes
-        console.log(sortedRanking)
+        setRanking(sortedRanking);
+        console.log(sortedRanking + 'ranking')
 
       } catch (error) {
         console.log(error)
       }
     });
   }, []);
+
 
   const handleJoinRoom = (event) => {
     event.preventDefault();
@@ -63,7 +66,7 @@ const [segundos, setSegundos] = useState(10);
     setMessage('');
   };
   const handleConfiguracion = () => {
-console.log(segundos, categoria)
+    console.log(segundos, categoria)
     //socket.emit('configuracion', { secondsNew: seconds, categoriaNew: categoria, room: room });
   };
   const handleStartGame = (event) => {
@@ -97,10 +100,10 @@ console.log(segundos, categoria)
           <label>
             Segundos entre preguntas
             <input defaultValue={segundos} type="number" name="" id=""
-             onChange={(e) => setSegundos(e.target.value)}
+              onChange={(e) => setSegundos(e.target.value)}
             />
-            </label>
-          
+          </label>
+
           <button onClick={handleConfiguracion}>Guardar configuración</button>
 
 
@@ -144,7 +147,31 @@ console.log(segundos, categoria)
           ) : null}
         </div>
       )}
-    </div>
-  );
+      <div  className="form-container sign-up-container" >
+      {isGameStarted ? (
+        <>
+          {currentQuestion ? (
+            <TriviaGame props={{ roomId: room, pregunta: currentQuestion, user: username }} />
+          ) : (
+            <div>
+              {activeForm === 'ranking'? (
+                <div>
+                  <h2>Ranking:</h2>
+                  <ol>
+                    {ranking.map((user, index) => (
+                      <li key={index}>
+                        {user.username} - {user.score}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )  : null}
+            </div>
+          )}
+        </>
+     ) :({})}
+     </div>
+      </div>
+      );
 }
 

@@ -40,6 +40,8 @@ export function TriviaGame(props) {
     }
   }, [])
 
+  
+
   if (pregunta.pregunta) {
     return (
       <>
