@@ -16,6 +16,10 @@ export function TriviaGame(props) {
     setResponse('')
   }
 
+  useEffect(()=>{
+    setIsLoading(false)
+  },[pregunta])
+
   useEffect(() => {
     socket.on('respuestaCorrecta', (respuesta) => {
       setIsLoading(false)
