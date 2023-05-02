@@ -2,9 +2,9 @@ const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const cors = require('cors')
-const preguntes = require('./json/react.json')
 const app = express();
 app.use(cors())
+
 const httpServer = createServer(app);
 
 console.log('update')
@@ -16,30 +16,20 @@ const io = new Server(httpServer, {
 
 const rooms = {}
 
-let pregunta;
-const lanzarPregunta = (intervalID, room) => {
-    if (rooms[room].indiceQuiz < preguntes.preguntas.length) {
-        rooms[room].pregunta = preguntes.preguntas[rooms[room].indiceQuiz]
-        rooms[room].indiceQuiz++
-        io.to(room).emit('pregunta', pregunta);
-       
-     socket.on('respuesta', (respuesta) => {
-            const preguntaActual = rooms[room].pregunta;
-            if (respuesta === preguntaActual.respuesta) {
-              // La respuesta es correcta, hacer algo aquí
-              console.log('Respuesta correcta');
-            } else {
-              // La respuesta es incorrecta, hacer algo aquí
-              console.log('Respuesta incorrecta');
-            }
-          });
-    } else {
-        clearInterval(intervalID)
-    }
+const recuperaPreguntas = (categoria) => {
+  let listapreguntas;
+  if (categoria === 'pokemon') {
+    listapreguntas = require('./json/pokemon.json');
+  } else if (categoria === 'barça') {
+    listapreguntas = require('./json/barça.json');
+  } else {
+    listapreguntas = require('./json/react.json');
+  }
+
+  return listapreguntas.preguntas;
 }
-const corregirRespuestas = () => {
-    // responde todas las respuestas
-}
+
+const ranking = []
 try {
     
     const usersInRooms = {};
@@ -56,16 +46,19 @@ try {
       const games = {}; // aquí se guardará la información de cada juego
 
       io.on('connection', (socket) => {
-        socket.on('join', ({ username, room }) => {
+        socket.on('join', ({ username, room, segundos, categoria }) => {
           socket.join(room);
           console.log(username)
           // si el juego no existe, lo creamos con la información necesaria
           if (!games[room]) {
+              let listapreguntas = recuperaPreguntas(categoria)
+            console.log(segundos, categoria)
             games[room] = {
               users: [username],
-              questions: preguntes.preguntas,
+              questions: listapreguntas,
               started: false,
-              currentQuestionIndex: -1,
+              currentQuestionIndex: 0,
+              segundos : (segundos * 1000)
             };
           } else {
             // si el juego ya existe, añadimos al usuario a la lista
@@ -78,27 +71,71 @@ try {
           });
         });
       
+
         socket.on('startGame', (room) => {
           const game = games[room];
       
           if (game && !game.started) {
               game.started = true;
-              game.currentQuestionIndex = 0;
+              game.currentQuestionIndex = -1;
               io.to(room).emit('gameStarted', true);
+
             // aquí se lanza el intervalo para ir enviando las preguntas a los usuarios
+            
             const intervalId = setInterval(() => {
+              console.log('interval')
               if (game.currentQuestionIndex >= game.questions.length) {
+               
+                  // Ordenar el ranking por puntuación de mayor a menor
+                  const sortedRanking = Object.entries(ranking)
+                      .sort((a, b) => b[1].puntuacion - a[1].puntuacion);
+              
+                      console.log(sortedRanking)
+                  // Emitir evento con el ranking ordenado
+                  io.to(room).emit('ranking', sortedRanking);
+              
                 clearInterval(intervalId);
+
               } else {
+                game.currentQuestionIndex++;
                 const question = game.questions[game.currentQuestionIndex];
                 console.log(question)
                 io.to(room).emit('pregunta', question);
-                game.currentQuestionIndex++;
               }
-            }, 5000);
+            }, game.segundos);
+            
+            
           }
         });
-      
+
+        socket.on('respuesta', ({user,optionNumber, roomId}) => {
+          try {
+            console.log(ranking)
+            const game = games[roomId];
+            const preguntaActual = game.questions[game.currentQuestionIndex]
+            console.log(preguntaActual)
+          console.log(preguntaActual.opciones[optionNumber].correcta)
+          if(preguntaActual.opciones[optionNumber].correcta === true ){
+              console.log('respuesta correcta')
+              if(!ranking[user]){
+              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+              } else {
+                ranking[user].puntuacion += Date.now()+1
+                ranking[user].correctas ++ 
+              }
+              console.log(ranking)
+          } else {
+            if(!ranking[user]){
+              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+              } else {
+                ranking[user].incorrectas ++ 
+              }
+            console.log('respuesta incorrecta')
+          }
+        } catch (error) {
+         console.log(error)   
+        }
+        });
         socket.on('disconnect', () => {
           // Eliminar al usuario de la lista de usuarios en la sala al desconectarse
           const rooms = Object.keys(socket.rooms).filter((room) => room !== socket.id);
