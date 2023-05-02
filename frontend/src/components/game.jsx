@@ -34,6 +34,19 @@ export function TriviaGame(props) {
       setIsLoading(false)
       setRespuestaCorrecta(respuesta) // Actualizar el estado con la respuesta correcta
     })
+    
+    const [puntajes, setPuntajes] = useState([]);
+
+    useEffect(() => {
+      // Escucha la actualización del ranking desde el servidor
+      socket.on("ranking", (nuevoRanking) => {
+        setPuntajes(nuevoRanking);
+      });
+  
+      // Solicita el ranking al servidor
+      socket.emit("solicitarRanking");
+    }, []);
+  
 
     return () => {
       socket.off('respuestaCorrecta')
@@ -56,6 +69,17 @@ export function TriviaGame(props) {
         }
         {isLoading && <div className="lds-ring"><div></div><div></div><div></div><div></div></div>}
         {respuestaCorrecta && <div>Respuesta correcta!</div>} {/* Mostrar el mensaje de respuesta correcta */}
+
+        <div>
+      <h1>Ranking</h1>
+      <ul>
+        {puntajes.map((puntaje, index) => (
+          <li key={index}>
+            {puntaje.usuario}: {puntaje.puntaje}
+          </li>
+        ))}
+      </ul>
+    </div>
       </>
     )
   } else {

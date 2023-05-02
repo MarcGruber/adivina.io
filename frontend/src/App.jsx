@@ -133,7 +133,7 @@ console.log(segundos, categoria)
         </>
       ) : (
         <div className="form-container sign-up-container">
-          {activeForm === 'room' ? (
+          {activeForm === 'user' ? (
             <div onClick={handleFormSala}>
               <button onClick={handleStartGame}>Comenzar juego</button>
             </div>

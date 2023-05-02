@@ -29,7 +29,34 @@ const recuperaPreguntas = (categoria) => {
   return listapreguntas.preguntas;
 }
 
-const ranking = []
+const corregirRespuestas = (room) => {
+  // responde todas las respuestas
+  const game = games[room];
+  const correctAnswers = game.questions.filter((pregunta, index) => {
+      return pregunta.opciones[pregunta.respuesta].correcta === true;
+  });
+  const userScores = {};
+  game.users.forEach((user) => {
+      userScores[user] = 0;
+  });
+  game.users.forEach((user) => {
+      game.questions.forEach((pregunta, index) => {
+          if (pregunta.respuestaUsuario && pregunta.respuestaUsuario[user] === pregunta.respuesta) {
+              userScores[user]++;
+          }
+      });
+  });
+  const ranking = Object.keys(userScores).sort((a, b) => {
+      return userScores[b] - userScores[a];
+  }).map((user, index) => {
+      return { username: user, score: userScores[user] };
+  });
+
+  // Emitir el ranking actualizado a todos los clientes en la sala
+  io.to(room).emit('ranking', ranking);
+
+  return ranking;
+}
 try {
 
   const usersInRooms = {};
@@ -154,15 +181,66 @@ try {
             text: `${socket.username} abandonó la sala`,
           });
         }
+        });
+        socket.on('disconnect', () => {
+          // Eliminar al usuario de la lista de usuarios en la sala al desconectarse
+          const rooms = Object.keys(socket.rooms).filter((room) => room !== socket.id);
+          rooms.forEach((room) => {
+            if (games[room]) {
+              games[room].users = games[room].users.filter(
+                (username) => username !== socket.username
+              );
+      
+              io.to(room).emit('message', {
+                username: 'Sistema',
+                text: `${socket.username} abandonó la sala`,
+              });
+            }
+          });
+        });
+        socket.on("enviarPuntaje", ({ usuario, puntaje }) => {
+          // Agrega o actualiza el puntaje del usuario en la variable de puntajes
+          puntajes[usuario] = puntaje;
+      
+          // Actualiza el ranking y lo envía a todos los clientes conectados
+          actualizarRanking();
+        });
+      
+        socket.on("solicitarRanking", () => {
+          // Envía el ranking actualizado al cliente que lo solicita
+          enviarRanking(socket);
+        });
+      
+        socket.on("disconnect", () => {
+          console.log("Usuario desconectado");
+        });
       });
-    });
-  });
+      
+      const enviarRanking = (socket) => {
+        const ranking = Object.entries(puntajes)
+          .sort((a, b) => b[1] - a[1])
+          .map(([usuario, puntaje]) => ({ usuario, puntaje }));
+      
+        socket.emit("ranking", ranking);
+      };
+      
+      const actualizarRanking = () => {
+        io.emit("ranking", Object.entries(puntajes)
+          .sort((a, b) => b[1] - a[1])
+          .map(([usuario, puntaje]) => ({ usuario, puntaje }))
+        );
+      };
+      
+      io.listen(3000, () => {
+        console.log("Servidor iniciado");
+      });
 
-} catch (error) {
-  console.log(error)
-}
+      
+       
 
-httpServer.listen(3000, () =>
-  console.log(`Server listening at http://localhost:3000`)
-);
+ 
 
+// httpServer.listen(3000, () =>
+//   console.log(`Server listening at http://localhost:3000`)
+// );
+  
