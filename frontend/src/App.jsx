@@ -4,7 +4,7 @@ import { TriviaGame } from './components/game';
 
 // const socket = io('http://192.168.85.36:3000'); // Establecer la conexión con el servidor de Socket.io
 const socket = io('http://localhost:3000');
- function ChatRoom() {
+function ChatRoom() {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
   const [message, setMessage] = useState('');
@@ -14,7 +14,10 @@ const socket = io('http://localhost:3000');
   const [answer, setAnswer] = useState('');
   const [activeForm, setActiveForm] = useState('room');
   const [categoria, setCategoria] = useState('react');
-const [segundos, setSegundos] = useState(10);
+  const [segundos, setSegundos] = useState(10);
+  const [ranking, setRanking] = useState([]);
+  const [showRanking, setShowRanking] = useState(false);
+  const [gameEnded, setGameEnded] = useState(false);
 
 
   const handleFormUser = () => {
@@ -38,19 +41,27 @@ const [segundos, setSegundos] = useState(10);
     socket.on('pregunta', (pregunta) => {
       setCurrentQuestion(pregunta);
     });
+    
     socket.on('ranking', (sortedRanking) => {
       try {
         // Lógica para actualizar el ranking aquí
         // ...
         // Cuando se actualiza el ranking, se envía a los clientes
-        console.log(sortedRanking)
-
+        console.log(sortedRanking);
+        setRanking(sortedRanking);
+        if (ranking.length > 0) console.log(ranking)
+        setGameEnded(true)
       } catch (error) {
         console.log(error)
       }
     });
+  
   }, []);
 
+socket.on('gameStarted', (boolean) => {
+      setIsGameStarted(boolean);
+    });
+  
   const handleJoinRoom = (event) => {
     event.preventDefault();
     console.log(room);
@@ -63,7 +74,7 @@ const [segundos, setSegundos] = useState(10);
     setMessage('');
   };
   const handleConfiguracion = () => {
-console.log(segundos, categoria)
+    console.log(segundos, categoria)
     //socket.emit('configuracion', { secondsNew: seconds, categoriaNew: categoria, room: room });
   };
   const handleStartGame = (event) => {
@@ -83,6 +94,7 @@ console.log(segundos, categoria)
 
 
   return (
+    <>
     <div className="form-container sign-up-container">
       {!isGameStarted ? (
         <>
@@ -97,9 +109,9 @@ console.log(segundos, categoria)
           <label>
             Segundos entre preguntas
             <input defaultValue={segundos} type="number" name="" id=""
-             onChange={(e) => setSegundos(e.target.value)}
+              onChange={(e) => setSegundos(e.target.value)}
             />
-            </label>
+          </label>
           <form onSubmit={handleJoinRoom}>
             <label>
               Nombre de usuario:
@@ -140,7 +152,32 @@ console.log(segundos, categoria)
           ) : null}
         </div>
       )}
+      
+      
     </div>
+    {gameEnded ? (
+      <table >
+        <thead>
+          <tr>
+            <th>Posición</th>
+            <th>Nombre de usuario</th>
+            <th>Puntos</th>
+          </tr>
+        </thead>
+        <tbody>
+          { ranking.map((rank, index) =>
+          (
+
+            <tr key={index + rank.username}>
+              <td>{index + 1}</td>
+              <td>{rank[0]}</td>
+              <td>{rank[1].puntuacion}</td>
+            
+            </tr>
+          )) }
+        </tbody>
+      </table>) : null}
+            </>
   );
 }
 export default ChatRoom;
