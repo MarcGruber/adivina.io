@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { TriviaGame } from './components/game';
 
+
 // const socket = io('http://192.168.85.36:3000'); // Establecer la conexión con el servidor de Socket.io
 const socket = io('http://localhost:3000');
 function ChatRoom() {
@@ -156,12 +157,14 @@ socket.on('gameStarted', (boolean) => {
       
     </div>
     {gameEnded ? (
-      <table >
+      <table className='table' >
         <thead>
           <tr>
             <th>Posición</th>
             <th>Nombre de usuario</th>
             <th>Puntos</th>
+            <th>Correctas</th>
+            <th>Incorrectas</th>
           </tr>
         </thead>
         <tbody>
@@ -172,7 +175,8 @@ socket.on('gameStarted', (boolean) => {
               <td>{index + 1}</td>
               <td>{rank[0]}</td>
               <td>{rank[1].puntuacion}</td>
-            
+              <td>{rank[1].correctas}</td>
+              <td>{rank[1].incorrectas}</td>
             </tr>
           )) }
         </tbody>
