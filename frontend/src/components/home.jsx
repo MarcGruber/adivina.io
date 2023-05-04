@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-import { TriviaGame } from './components/game';
+import { TriviaGame } from './game';
 
 // const socket = io('http://192.168.85.36:3000'); // Establecer la conexión con el servidor de Socket.io
 const socket = io('http://localhost:3000');
- function ChatRoom() {
+export function ChatRoom() {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
   const [message, setMessage] = useState('');
@@ -100,6 +100,10 @@ console.log(segundos, categoria)
              onChange={(e) => setSegundos(e.target.value)}
             />
             </label>
+          
+          <button onClick={handleConfiguracion}>Guardar configuración</button>
+
+
           <form onSubmit={handleJoinRoom}>
             <label>
               Nombre de usuario:
@@ -143,4 +147,4 @@ console.log(segundos, categoria)
     </div>
   );
 }
-export default ChatRoom;
+
