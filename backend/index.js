@@ -64,7 +64,7 @@ try {
             // si el juego ya existe, añadimos al usuario a la lista
             games[room].users.push(username);
           }
-      
+          io.to(room).emit('usuariosJugando', games[room].users)
           io.to(room).emit('message', {
             username: 'Sistema',
             text: `${username} se unió a la sala`,
@@ -100,7 +100,8 @@ try {
                 game.currentQuestionIndex++;
                 const question = game.questions[game.currentQuestionIndex];
                 console.log(question)
-                io.to(room).emit('pregunta', question);
+                let segundos = game.segundos
+                io.to(room).emit('pregunta', {question, segundos});
               }
             }, game.segundos);
             
