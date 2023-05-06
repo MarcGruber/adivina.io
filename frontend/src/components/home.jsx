@@ -29,17 +29,19 @@ export function ChatRoom() {
   const handleFormSala = () => {
     setActiveForm('user');
   };
+
+
   useEffect(() => {
     let intervalId;
     if (segundosRestantes > 0) {
       intervalId = setTimeout(() => {
         setSegundosRestantes(segundosRestantes - 1);
       }, 1000);
-    } else {
-      // El tiempo se ha agotado, hacer algo aquí (por ejemplo, enviar la respuesta o pasar a la siguiente pregunta)
-    }
+    } 
     return () => clearInterval(intervalId);
   }, [segundosRestantes]);
+
+
   useEffect(() => {
     // Escuchar eventos del servidor
     socket.on('message', (message) => {

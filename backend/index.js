@@ -58,7 +58,8 @@ try {
               questions: listapreguntas,
               started: false,
               currentQuestionIndex: 0,
-              segundos : (segundos * 1000)
+              segundos : (segundos * 1000),
+              ranking : []
             };
           } else {
             // si el juego ya existe, añadimos al usuario a la lista
@@ -86,14 +87,11 @@ try {
               console.log('interval')
               if (game.currentQuestionIndex >= game.questions.length) {
                
-                  // Ordenar el ranking por puntuación de mayor a menor
-                  const sortedRanking = Object.entries(ranking)
-                      .sort((a, b) => b[1].puntuacion - a[1].puntuacion);
-              
-                      console.log(sortedRanking)
-                  // Emitir evento con el ranking ordenado
+                const sortedRanking = Object.entries(game.ranking)
+                .sort((a, b) => b[1].puntuacion - a[1].puntuacion);
+                console.log(sortedRanking)
                   io.to(room).emit('ranking', sortedRanking);
-                  ranking = []
+                  
                 clearInterval(intervalId);
 
               } else {
@@ -118,18 +116,17 @@ try {
           console.log(preguntaActual.opciones[optionNumber].correcta)
           if(preguntaActual.opciones[optionNumber].correcta === true ){
               console.log('respuesta correcta')
-              if(!ranking[user]){
-              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+              if(!game.ranking[user]){
+              game.ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
               } else {
-                ranking[user].puntuacion += Date.now()+1
-                ranking[user].correctas ++ 
+                game.ranking[user].puntuacion += Date.now()
+                game.ranking[user].correctas ++ 
               }
-              console.log(ranking)
           } else {
-            if(!ranking[user]){
-              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+            if(!game.ranking[user]){
+              game.ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
               } else {
-                ranking[user].incorrectas ++ 
+                game.ranking[user].incorrectas ++ 
               }
             console.log('respuesta incorrecta')
           }
