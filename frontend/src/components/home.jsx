@@ -14,7 +14,10 @@ export function ChatRoom() {
   const [answer, setAnswer] = useState('');
   const [activeForm, setActiveForm] = useState('room');
   const [categoria, setCategoria] = useState('react');
-const [segundos, setSegundos] = useState(10);
+  const [segundos, setSegundos] = useState(10);
+  const [ranking, setRanking] = useState([]);
+
+
 
 
   const handleFormUser = () => {
@@ -44,6 +47,10 @@ const [segundos, setSegundos] = useState(10);
         // ...
         // Cuando se actualiza el ranking, se envía a los clientes
         console.log(sortedRanking)
+        if(!sortedRanking.length){
+          setRanking(sortedRanking);
+        }
+       
 
       } catch (error) {
         console.log(error)
@@ -63,7 +70,7 @@ const [segundos, setSegundos] = useState(10);
     setMessage('');
   };
   const handleConfiguracion = () => {
-console.log(segundos, categoria)
+    console.log(segundos, categoria)
     //socket.emit('configuracion', { secondsNew: seconds, categoriaNew: categoria, room: room });
   };
   const handleStartGame = (event) => {
@@ -97,10 +104,10 @@ console.log(segundos, categoria)
           <label>
             Segundos entre preguntas
             <input defaultValue={segundos} type="number" name="" id=""
-             onChange={(e) => setSegundos(e.target.value)}
+              onChange={(e) => setSegundos(e.target.value)}
             />
-            </label>
-          
+          </label>
+
           <button onClick={handleConfiguracion}>Guardar configuración</button>
 
 
@@ -144,6 +151,32 @@ console.log(segundos, categoria)
           ) : null}
         </div>
       )}
+      {isGameStarted ? (<table>
+        <thead>
+          <tr>
+            <th>Posición</th>
+            <th>Nombre de usuario</th>
+            <th>Puntos</th>
+            <th>correcta</th>
+            <th>incorrecta</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ranking ? ranking.map((rank, index) => 
+          console.log(rank.user+'hfdhdh')
+          (
+            
+            <tr key={rank.user}>
+              <td>{index + 1}</td>
+              <td>{rank.user}</td>
+              <td>{rank.puntuacion}</td>
+              <td>{rank.correcta}</td>
+              <td>{rank.incorrecta}</td>
+            </tr>
+          )):""}
+        </tbody>
+      </table>):null}
+      
     </div>
   );
 }

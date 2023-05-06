@@ -29,7 +29,7 @@ const recuperaPreguntas = (categoria) => {
   return listapreguntas.preguntas;
 }
 
-const ranking = []
+let ranking = []
 try {
     
     const usersInRooms = {};
@@ -74,7 +74,7 @@ try {
 
         socket.on('startGame', (room) => {
           const game = games[room];
-      
+          
           if (game && !game.started) {
               game.started = true;
               game.currentQuestionIndex = -1;
@@ -93,7 +93,7 @@ try {
                       console.log(sortedRanking)
                   // Emitir evento con el ranking ordenado
                   io.to(room).emit('ranking', sortedRanking);
-              
+                  ranking = []
                 clearInterval(intervalId);
 
               } else {
@@ -137,9 +137,13 @@ try {
         }
         });
         socket.on('disconnect', () => {
+          
           // Eliminar al usuario de la lista de usuarios en la sala al desconectarse
+          
           const rooms = Object.keys(socket.rooms).filter((room) => room !== socket.id);
+          
           rooms.forEach((room) => {
+            
             if (games[room]) {
               games[room].users = games[room].users.filter(
                 (username) => username !== socket.username
@@ -149,6 +153,7 @@ try {
                 username: 'Sistema',
                 text: `${socket.username} abandonó la sala`,
               });
+
             }
           });
         });
