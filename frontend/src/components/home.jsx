@@ -101,7 +101,7 @@ export function ChatRoom() {
 
   return (
     <>
-      <div className="form-container sign-up-container">
+      <div className=" form form-container sign-up-container">
         {!isGameStarted ? (
           <>
             <label>
@@ -139,21 +139,7 @@ export function ChatRoom() {
                 Unirse a la sala
               </button>
             </form>
-            <div>
-              {
-                listaUsers ?
-                  <>
-                  <p>Usuarios en la sala:</p>
-                  <ul>
-                    {listaUsers.map((name) =>
-                    (
-                      <li>{name}</li>
-                    ))}
-                    </ul>
-                  </>
-                  : null
-              }
-            </div>
+           
           </>
         ) : null}
 
@@ -174,9 +160,24 @@ export function ChatRoom() {
             ) : null}
           </div>
         )}
-
+      
 
       </div>
+      <div className='usersGame'>
+              {
+                listaUsers ?
+                  <>
+                 <b><p>Usuarios en la sala</p></b>
+                  
+                    {listaUsers.map((name) =>
+                    (
+                      <h3>{name}</h3>
+                    ))}
+                    
+                  </>
+                  : null
+              }
+            </div>
       {gameEnded ? (
         <>
         <button onClick={()=>{
