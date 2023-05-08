@@ -78,12 +78,12 @@ export function ChatRoom() {
   }, []);
 
 
-  const handleJoinRoom = (event) => {
-    event.preventDefault();
-    console.log(room);
-    socket.emit('join', { username, room, segundos, categoria });
-    setJointRoom(true)
-  };
+  // const handleJoinRoom = (event) => {
+  //   event.preventDefault();
+  //   console.log(room);
+  //   socket.emit('join', { username, room, segundos, categoria });
+  //   setJointRoom(true)
+  // };
   socket.on('gameStarted', (boolean) => {
     setIsGameStarted(boolean);
   });
