@@ -10,6 +10,7 @@ export function ChatRoom() {
   const [room, setRoom] = useState('');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [ joinRoom, setJointRoom ] = useState(false)
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -76,16 +77,16 @@ export function ChatRoom() {
 
   }, []);
 
-  socket.on('gameStarted', (boolean) => {
-    setIsGameStarted(boolean);
-  });
 
   const handleJoinRoom = (event) => {
     event.preventDefault();
     console.log(room);
     socket.emit('join', { username, room, segundos, categoria });
+    setJointRoom(true)
   };
-
+  socket.on('gameStarted', (boolean) => {
+    setIsGameStarted(boolean);
+  });
 
   const handleStartGame = (event) => {
     event.preventDefault();
@@ -101,8 +102,9 @@ export function ChatRoom() {
 
   return (
     <>
+        <h1>ADIVINA.IO</h1>
       <div className=" form form-container sign-up-container">
-        {!isGameStarted ? (
+        {!joinRoom ? (
           <>
             <label>
               Categoría:
@@ -152,10 +154,12 @@ export function ChatRoom() {
             {!gameEnded ? <h1>{segundosRestantes}</h1> : ''}
           </>
         ) : (
-          <div className="form-container sign-up-container">
+          <div >
             {activeForm === 'room' ? (
               <div onClick={handleFormSala}>
-                <button onClick={handleStartGame}>Comenzar juego</button>
+                <button onClick={handleStartGame} className="secondButton">
+                  Comenzar juego
+                  </button>
               </div>
             ) : null}
           </div>
