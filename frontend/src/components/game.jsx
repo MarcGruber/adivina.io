@@ -2,35 +2,43 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import '../App.css'
 import '../index.css'
-const socket = io('http://localhost:3000')
+import '../table.css'
+
+// const socket = io('http://192.168.85.36:3000'); // Establecer la conexión con el servidor de Socket.io
+const socket = io('http://localhost:3000'); 
 
 export function TriviaGame(props) {
-  const { roomId, pregunta } = props.props
+  const { roomId, pregunta, user } = props.props
+  console.log(props.props)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  console.log(`h1`)
-  const handleOptionClick = (optionNumber) => {
+  const [respuestaCorrecta, setRespuestaCorrecta] = useState(false) // Nuevo estado para indicar si la respuesta es correcta
+console.log(pregunta)
+  const handleOptionClick = (optionNumber, roomId, user) => {
     setIsLoading(true)
-    socket.emit('response', pregunta.opciones[optionNumber].opcion)
+    console.log(roomId)
+    socket.emit('respuesta', {optionNumber, roomId, user})
+    if(pregunta.opciones[optionNumber].correcta === true ){
+      alert('TRUE')
+    } else {
+      alert('FALSE')
+    }
     setResponse('')
   }
+  useEffect(()=>{
+    setIsLoading(false)
+    setResponse('')
+  },[pregunta])
 
   useEffect(() => {
+    socket.on('respuestaCorrecta', (respuesta) => {
+      setIsLoading(false)
+      setRespuestaCorrecta(respuesta) // Actualizar el estado con la respuesta correcta
+    })
 
-
-    // const respuestaCorrecta = (respuesta) => {
-    //   setIsLoading(false)
-    //   if (respuesta) {
-    //     alert('Respuesta correcta!')
-    //   } else {
-    //     alert('Respuesta incorrecta')
-    //   }
-    // }
-    // socket.on('respuestaCorrecta', respuestaCorrecta)
-
-    // return () => {
-    //   socket.off('respuestaCorrecta', respuestaCorrecta)
-    // }
+    return () => {
+      socket.off('respuestaCorrecta')
+    }
   }, [])
 
   if (pregunta.pregunta) {
@@ -40,12 +48,13 @@ export function TriviaGame(props) {
           <>
             <h2>{pregunta.pregunta}</h2>
             <ul>
-              <li><button onClick={() => handleOptionClick(0)}>{pregunta.opciones[0].opcion}</button></li>
-              <li><button onClick={() => handleOptionClick(1)}>{pregunta.opciones[1].opcion}</button></li>
+              <li><button onClick={() => handleOptionClick(0, roomId, user)}>{pregunta.opciones[0].opcion}</button></li>
+              <li><button onClick={() => handleOptionClick(1, roomId, user)}>{pregunta.opciones[1].opcion}</button></li>
             </ul>
           </>
         }
         {isLoading && <div className="lds-ring"><div></div><div></div><div></div><div></div></div>}
+        {respuestaCorrecta && <div>Respuesta correcta!</div>} {/* Mostrar el mensaje de respuesta correcta */}
       </>
     )
   } else {

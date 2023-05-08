@@ -1,0 +1,69 @@
+{
+    "preguntas": [
+        {
+            "pregunta": "¿Cuántos tipos de Pokémon existen? (ejemplo: agua, fuego...)",
+            "opciones": [
+                {
+                    "opcion": "18",
+                    "correcta": true
+                },
+                {
+                    "opcion": "15",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "¿De qué tipo es Pikachu?",
+            "opciones": [
+                {
+                    "opcion": "Eléctrico",
+                    "correcta": true
+                },
+                {
+                    "opcion": "Agua",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Quién es el entrenador principal en la serie de televisión Pokémon?",
+            "opciones": [
+                {
+                    "opcion": "Brock",
+                    "correcta": false
+                },
+                {
+                    "opcion": "Ash Ketchum",
+                    "correcta": true
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Cuál es el Pokémon inicial de agua en la región de Kalos?",
+            "opciones": [
+                {
+                    "opcion": "FROAKIE",
+                    "correcta": true
+                },
+                {
+                    "opcion": "POPPLIO",
+                    "correcta": false
+                }
+            ]
+        },
+        {
+            "pregunta": "¿Qué Pokémon evoluciona a través del intercambio?",
+            "opciones": [
+                {
+                    "opcion": "KADABRA",
+                    "correcta": true
+                },
+                {
+                    "opcion": "AGUMON",
+                    "correcta": false
+                }
+            ]
+        }
+    ]
+}
