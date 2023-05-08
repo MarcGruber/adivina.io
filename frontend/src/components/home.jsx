@@ -160,9 +160,6 @@ export function ChatRoom() {
             ) : null}
           </div>
         )}
-      
-
-      </div>
       <div className='usersGame'>
               {
                 listaUsers ?
@@ -178,6 +175,9 @@ export function ChatRoom() {
                   : null
               }
             </div>
+
+      </div>
+      
       {gameEnded ? (
         <>
         <button onClick={()=>{
