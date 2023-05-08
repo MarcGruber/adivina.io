@@ -90,7 +90,7 @@ export function ChatRoom() {
   const handleStartGame = (event) => {
     event.preventDefault();
     console.log(room);
-    socket.emit('startGame', room);
+    socket.emit('startGame', {room, username});
   };
 
 

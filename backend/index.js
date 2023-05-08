@@ -73,10 +73,12 @@ try {
         });
       
 
-        socket.on('startGame', (room) => {
+        socket.on('startGame', ({room, username}) => {
+         
           const game = games[room];
+          console.log(game.users[0])
           
-          if (game && !game.started) {
+          if (game && !game.started && game.users[0] === username) {
               game.started = true;
               game.currentQuestionIndex = -1;
               io.to(room).emit('gameStarted', true);
