@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import '../App.css'
 import '../index.css'
+import '../table.css'
 
 // const socket = io('http://192.168.85.36:3000'); // Establecer la conexión con el servidor de Socket.io
 const socket = io('http://localhost:3000'); 
@@ -12,12 +13,16 @@ export function TriviaGame(props) {
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [respuestaCorrecta, setRespuestaCorrecta] = useState(false) // Nuevo estado para indicar si la respuesta es correcta
-
+console.log(pregunta)
   const handleOptionClick = (optionNumber, roomId, user) => {
     setIsLoading(true)
     console.log(roomId)
-  
     socket.emit('respuesta', {optionNumber, roomId, user})
+    if(pregunta.opciones[optionNumber].correcta === true ){
+      alert('TRUE')
+    } else {
+      alert('FALSE')
+    }
     setResponse('')
   }
   useEffect(()=>{

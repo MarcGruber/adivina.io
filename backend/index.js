@@ -29,7 +29,7 @@ const recuperaPreguntas = (categoria) => {
   return listapreguntas.preguntas;
 }
 
-const ranking = []
+let ranking = []
 try {
     
     const usersInRooms = {};
@@ -58,13 +58,14 @@ try {
               questions: listapreguntas,
               started: false,
               currentQuestionIndex: 0,
-              segundos : (segundos * 1000)
+              segundos : (segundos * 1000),
+              ranking : []
             };
           } else {
             // si el juego ya existe, añadimos al usuario a la lista
             games[room].users.push(username);
           }
-      
+          io.to(room).emit('usuariosJugando', games[room].users)
           io.to(room).emit('message', {
             username: 'Sistema',
             text: `${username} se unió a la sala`,
@@ -72,10 +73,12 @@ try {
         });
       
 
-        socket.on('startGame', (room) => {
+        socket.on('startGame', ({room, username}) => {
+         
           const game = games[room];
-      
-          if (game && !game.started) {
+          console.log(game.users[0])
+          
+          if (game && !game.started && game.users[0] === username) {
               game.started = true;
               game.currentQuestionIndex = -1;
               io.to(room).emit('gameStarted', true);
@@ -86,21 +89,19 @@ try {
               console.log('interval')
               if (game.currentQuestionIndex >= game.questions.length) {
                
-                  // Ordenar el ranking por puntuación de mayor a menor
-                  const sortedRanking = Object.entries(ranking)
-                      .sort((a, b) => b[1].puntuacion - a[1].puntuacion);
-              
-                      console.log(sortedRanking)
-                  // Emitir evento con el ranking ordenado
+                const sortedRanking = Object.entries(game.ranking)
+                .sort((a, b) => b[1].puntuacion - a[1].puntuacion);
+                console.log(sortedRanking)
                   io.to(room).emit('ranking', sortedRanking);
-              
+                  
                 clearInterval(intervalId);
 
               } else {
                 game.currentQuestionIndex++;
                 const question = game.questions[game.currentQuestionIndex];
                 console.log(question)
-                io.to(room).emit('pregunta', question);
+                let segundos = game.segundos
+                io.to(room).emit('pregunta', {question, segundos});
               }
             }, game.segundos);
             
@@ -117,18 +118,17 @@ try {
           console.log(preguntaActual.opciones[optionNumber].correcta)
           if(preguntaActual.opciones[optionNumber].correcta === true ){
               console.log('respuesta correcta')
-              if(!ranking[user]){
-              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+              if(!game.ranking[user]){
+              game.ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
               } else {
-                ranking[user].puntuacion += Date.now()+1
-                ranking[user].correctas ++ 
+                game.ranking[user].puntuacion += Date.now()
+                game.ranking[user].correctas ++ 
               }
-              console.log(ranking)
           } else {
-            if(!ranking[user]){
-              ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
+            if(!game.ranking[user]){
+              game.ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
               } else {
-                ranking[user].incorrectas ++ 
+                game.ranking[user].incorrectas ++ 
               }
             console.log('respuesta incorrecta')
           }
@@ -137,9 +137,13 @@ try {
         }
         });
         socket.on('disconnect', () => {
+          
           // Eliminar al usuario de la lista de usuarios en la sala al desconectarse
+          
           const rooms = Object.keys(socket.rooms).filter((room) => room !== socket.id);
+          
           rooms.forEach((room) => {
+            
             if (games[room]) {
               games[room].users = games[room].users.filter(
                 (username) => username !== socket.username
@@ -149,6 +153,7 @@ try {
                 username: 'Sistema',
                 text: `${socket.username} abandonó la sala`,
               });
+
             }
           });
         });
