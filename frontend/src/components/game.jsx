@@ -17,8 +17,12 @@ console.log(pregunta)
   const handleOptionClick = (optionNumber, roomId, user) => {
     setIsLoading(true)
     console.log(roomId)
-  
     socket.emit('respuesta', {optionNumber, roomId, user})
+    if(pregunta.opciones[optionNumber].correcta === true ){
+      alert('TRUE')
+    } else {
+      alert('FALSE')
+    }
     setResponse('')
   }
   useEffect(()=>{
