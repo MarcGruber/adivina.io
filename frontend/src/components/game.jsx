@@ -54,7 +54,10 @@ console.log(pregunta)
           </>
         }
         {isLoading && <div className="lds-ring"><div></div><div></div><div></div><div></div></div>}
-        {respuestaCorrecta && <div>Respuesta correcta!</div>} {/* Mostrar el mensaje de respuesta correcta */}
+        {/* {respuestaCorrecta && <div>Respuesta correcta!</div>} Mostrar el mensaje de respuesta correcta */}
+        {respuestaCorrecta && <div className="respuesta-correcta">Respuesta correcta!</div>} {/* Mostrar el mensaje de respuesta correcta */}
+        {!respuestaCorrecta && response && <div className="respuesta-incorrecta">Respuesta incorrecta</div>} {/* Mostrar el mensaje de respuesta incorrecta */}
+
       </>
     )
   } else {
