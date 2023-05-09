@@ -8,8 +8,8 @@ const socket = io('http://localhost:3000');
 export function ChatRoom() {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
-  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [ joinRoom, setJointRoom ] = useState(false)
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -17,9 +17,12 @@ export function ChatRoom() {
   const [categoria, setCategoria] = useState('react');
   const [segundos, setSegundos] = useState(10);
   const [ranking, setRanking] = useState([]);
-  const [listaUsers, setListaUsers] = useState('')
+  const [listaUsers, setListaUsers] = useState('');
+  const [anfitrion, setAnfitrion] = useState(false)
+  const [showMenu, setShowMenu] = useState(true)
   const [showRanking, setShowRanking] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
+  const [viewForm , setViewForm] = useState(false)
   const [segundosRestantes, setSegundosRestantes] = useState(10);
 
   const handleFormUser = () => {
@@ -54,6 +57,8 @@ export function ChatRoom() {
 
     socket.on('pregunta', (data) => {
       setCurrentQuestion(data.question);
+      document.body.style.backgroundColor="white"
+      // pillamos segundos del setinterval del backend  y los dividmos para hacer el contador
       setSegundosRestantes((data.segundos/1000))
     });
     socket.on('usuariosJugando', (listaUsuarios) => {
@@ -62,10 +67,13 @@ export function ChatRoom() {
 
     socket.on('ranking', (sortedRanking) => {
       try {
-        // Lógica para actualizar el ranking aquí
-        // ...
-        // Cuando se actualiza el ranking, se envía a los clientes
-        console.log(sortedRanking);
+        sortedRanking.sort((a, b) => {
+          if (a[1].correctas === b[1].correctas) {
+            return b[1].puntuacion - a[1].puntuacion;
+          } else {
+            return b[1].correctas - a[1].correctas;
+          }
+        });
         setRanking(sortedRanking);
         if (ranking.length > 0) console.log(ranking)
         setGameEnded(true)
@@ -76,34 +84,44 @@ export function ChatRoom() {
 
   }, []);
 
-  socket.on('gameStarted', (boolean) => {
-    setIsGameStarted(boolean);
-  });
 
   const handleJoinRoom = (event) => {
     event.preventDefault();
     console.log(room);
     socket.emit('join', { username, room, segundos, categoria });
+    setJointRoom(true)
   };
-
+  socket.on('gameStarted', (boolean) => {
+    setIsGameStarted(boolean);
+    setShowMenu(false)
+  });
 
   const handleStartGame = (event) => {
     event.preventDefault();
     console.log(room);
-    socket.emit('startGame', {room, username});
+    if(username && room){
+      socket.emit('startGame', {room, username});
+    } else {
+      alert('Falta rellenar campos')
+    }
   };
-
-
-
-
-
-
 
   return (
     <>
-      <div className="form-container sign-up-container">
-        {!isGameStarted ? (
+
+        <h1>ADIVINA.<span style={{color:'orange'}}>IO</span></h1>
+      <div className="btnsM">
+
+        {showMenu ? (<>
+        <button onClick={()=>{setAnfitrion(true)}}  className="ButtonM">Crear Sala</button>
+        <button onClick={()=>{setAnfitrion(false)}}  className="ButtonM">Unirse a sala</button>
+        </>) : ''}
+        </div>
+      <div className=" form form-container sign-up-container">
+        
+        {!(joinRoom || viewForm) ? (
           <>
+          {anfitrion ? (<>
             <label>
               Categoría:
               <select onChange={(e) => setCategoria(e.target.value)}>
@@ -118,6 +136,7 @@ export function ChatRoom() {
                 onChange={(e) => setSegundos(e.target.value)}
               />
             </label>
+          </>) : ''}
             <form onSubmit={handleJoinRoom}>
               <label>
                 Nombre de usuario:
@@ -125,6 +144,7 @@ export function ChatRoom() {
                   type="text"
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
+                  required
                 />
               </label>
               <label>
@@ -133,27 +153,14 @@ export function ChatRoom() {
                   type="text"
                   value={room}
                   onChange={(event) => setRoom(event.target.value)}
+                  required
                 />
               </label>
               <button type="submit" onClick={handleFormUser}>
-                Unirse a la sala
+               {anfitrion ? 'Crear' : 'Unirse'}
               </button>
             </form>
-            <div>
-              {
-                listaUsers ?
-                  <>
-                  <p>Usuarios en la sala:</p>
-                  <ul>
-                    {listaUsers.map((name) =>
-                    (
-                      <li>{name}</li>
-                    ))}
-                    </ul>
-                  </>
-                  : null
-              }
-            </div>
+           
           </>
         ) : null}
 
@@ -166,28 +173,53 @@ export function ChatRoom() {
             {!gameEnded ? <h1>{segundosRestantes}</h1> : ''}
           </>
         ) : (
-          <div className="form-container sign-up-container">
-            {activeForm === 'room' ? (
+          <div >
+            {(activeForm === 'room' && anfitrion) ? (
               <div onClick={handleFormSala}>
-                <button onClick={handleStartGame}>Comenzar juego</button>
+                <button onClick={handleStartGame} className="secondButton">
+                  Comenzar juego
+                  </button>
               </div>
             ) : null}
+             <div className='usersGame'>
+              {
+                listaUsers ?
+                  <>
+                 <b><p>Usuarios en la sala</p></b>
+                  <div className='nameDiv'>
+                    <ul className='usuarios'>
+                    {listaUsers.map((name) =>
+                    (
+                      <li>{name}</li>
+                    ))}                   
+                    </ul>
+
+                    </div>
+                    
+                  </>
+                  : null
+              }
+            </div>
           </div>
         )}
+       
 
 
       </div>
+      
+      
+
+      
       {gameEnded ? (
         <>
         <button onClick={()=>{
-          setIsGameStarted(!isGameStarted), setGameEnded(!gameEnded), setListaUsers('') }
+          setIsGameStarted(!isGameStarted), setJointRoom(false),setViewForm(false),setShowMenu(true), setGameEnded(!gameEnded), setListaUsers('') }
           }>Reiniciar Juego</button>
         <table className='table' >
           <thead>
             <tr>
               <th>Posición</th>
               <th>Nombre de usuario</th>
-              <th>Puntos</th>
               <th>Correctas</th>
               <th>Incorrectas</th>
             </tr>
@@ -199,7 +231,6 @@ export function ChatRoom() {
               <tr key={index + rank.username}>
                 <td>{index + 1}</td>
                 <td>{rank[0]}</td>
-                <td>{rank[1].puntuacion}</td>
                 <td>{rank[1].correctas}</td>
                 <td>{rank[1].incorrectas}</td>
               </tr>
