@@ -8,11 +8,9 @@ const socket = io('http://localhost:3000');
 export function ChatRoom() {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [ joinRoom, setJointRoom ] = useState(false)
+  const [joinRoom, setJointRoom] = useState(false)
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
   const [activeForm, setActiveForm] = useState('room');
   const [categoria, setCategoria] = useState('react');
   const [segundos, setSegundos] = useState(10);
@@ -20,9 +18,8 @@ export function ChatRoom() {
   const [listaUsers, setListaUsers] = useState('');
   const [anfitrion, setAnfitrion] = useState(false)
   const [showMenu, setShowMenu] = useState(true)
-  const [showRanking, setShowRanking] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
-  const [viewForm , setViewForm] = useState(false)
+  const [viewForm, setViewForm] = useState(false)
   const [segundosRestantes, setSegundosRestantes] = useState(10);
 
   const handleFormUser = () => {
@@ -40,16 +37,12 @@ export function ChatRoom() {
       intervalId = setTimeout(() => {
         setSegundosRestantes(segundosRestantes - 1);
       }, 1000);
-    } 
+    }
     return () => clearInterval(intervalId);
   }, [segundosRestantes]);
 
 
   useEffect(() => {
-    // Escuchar eventos del servidor
-    socket.on('message', (message) => {
-      setMessages((messages) => [...messages, message]);
-    });
 
     socket.on('gameStarted', (boolean) => {
       setIsGameStarted(boolean);
@@ -57,9 +50,9 @@ export function ChatRoom() {
 
     socket.on('pregunta', (data) => {
       setCurrentQuestion(data.question);
-      document.body.style.backgroundColor="white"
+      document.body.style.backgroundColor = "white"
       // pillamos segundos del setinterval del backend  y los dividmos para hacer el contador
-      setSegundosRestantes((data.segundos/1000))
+      setSegundosRestantes((data.segundos / 1000))
     });
     socket.on('usuariosJugando', (listaUsuarios) => {
       setListaUsers(listaUsuarios)
@@ -87,7 +80,6 @@ export function ChatRoom() {
 
   const handleJoinRoom = (event) => {
     event.preventDefault();
-    console.log(room);
     socket.emit('join', { username, room, segundos, categoria });
     setJointRoom(true)
   };
@@ -98,45 +90,49 @@ export function ChatRoom() {
 
   const handleStartGame = (event) => {
     event.preventDefault();
-    console.log(room);
-    if(username && room){
-      socket.emit('startGame', {room, username});
+    if (username && room) {
+      socket.emit('startGame', { room, username });
     } else {
       alert('Falta rellenar campos')
     }
   };
+  const clearGame = () => {
+    setIsGameStarted(!isGameStarted), setJointRoom(false), setViewForm(false),
+      setShowMenu(true), setGameEnded(!gameEnded), setListaUsers('')
+  }
 
   return (
     <>
+      <div onClick={() => { location.reload() }} style={{ cursor: 'pointer' }}><h1>ADIVINA.<span style={{ color: 'orange' }}>IO</span></h1></div>
 
-        <h1>ADIVINA.<span style={{color:'orange'}}>IO</span></h1>
       <div className="btnsM">
 
         {showMenu ? (<>
-        <button onClick={()=>{setAnfitrion(true)}}  className="ButtonM">Crear Sala</button>
-        <button onClick={()=>{setAnfitrion(false)}}  className="ButtonM">Unirse a sala</button>
+          <button onClick={() => { setAnfitrion(true) }} className="ButtonM">Crear Sala</button>
+          <button onClick={() => { setAnfitrion(false) }} className="ButtonM">Unirse a sala</button>
         </>) : ''}
-        </div>
+
+      </div>
       <div className=" form form-container sign-up-container">
-        
+
         {!(joinRoom || viewForm) ? (
           <>
-          {anfitrion ? (<>
-            <label>
-              Categoría:
-              <select onChange={(e) => setCategoria(e.target.value)}>
-                <option value="react">React</option>
-                <option value="pokemon">Pokemon</option>
-                <option value="barça">Barça</option>
-              </select>
-            </label>
-            <label>
-              Segundos entre preguntas
-              <input defaultValue={segundos} type="number" name="" id=""
-                onChange={(e) => setSegundos(e.target.value)}
-              />
-            </label>
-          </>) : ''}
+            {anfitrion ? (<>
+              <label>
+                Categoría:
+                <select onChange={(e) => setCategoria(e.target.value)}>
+                  <option value="react">React</option>
+                  <option value="pokemon">Pokemon</option>
+                  <option value="barça">Barça</option>
+                </select>
+              </label>
+              <label>
+                Segundos entre preguntas
+                <input defaultValue={segundos} type="number" name="" id=""
+                  onChange={(e) => setSegundos(e.target.value)}
+                />
+              </label>
+            </>) : ''}
             <form onSubmit={handleJoinRoom}>
               <label>
                 Nombre de usuario:
@@ -157,16 +153,15 @@ export function ChatRoom() {
                 />
               </label>
               <button type="submit" onClick={handleFormUser}>
-               {anfitrion ? 'Crear' : 'Unirse'}
+                {anfitrion ? 'Crear' : 'Unirse'}
               </button>
             </form>
-           
+
           </>
         ) : null}
 
         {isGameStarted ? (
           <>
-            {console.log('patata')}
             {currentQuestion ? (
               <TriviaGame props={{ roomId: room, pregunta: currentQuestion, user: username }} />
             ) : null}
@@ -176,71 +171,70 @@ export function ChatRoom() {
           <div >
             {(activeForm === 'room' && anfitrion) ? (
               <div onClick={handleFormSala}>
+                <h2>Sala: {room}</h2>
                 <button onClick={handleStartGame} className="secondButton">
                   Comenzar juego
-                  </button>
+                </button>
               </div>
             ) : null}
-             <div className='usersGame'>
+            <div className='usersGame'>
               {
                 listaUsers ?
                   <>
-                 <b><p>Usuarios en la sala</p></b>
-                  <div className='nameDiv'>
-                    <ul className='usuarios'>
-                    {listaUsers.map((name) =>
-                    (
-                      <li>{name}</li>
-                    ))}                   
-                    </ul>
+                    <b><p>Usuarios en la sala</p></b>
+                    <div className='nameDiv'>
+                      <ul className='usuarios'>
+                        {listaUsers.map((name) =>
+                        (
+                          <li>{name}</li>
+                        ))}
+                      </ul>
 
                     </div>
-                    
+
                   </>
                   : null
               }
             </div>
           </div>
         )}
-       
+
 
 
       </div>
-      
-      
 
-      
+
+
+
       {gameEnded ? (
         <>
-        <button onClick={()=>{
-          setIsGameStarted(!isGameStarted), setJointRoom(false),setViewForm(false),setShowMenu(true), setGameEnded(!gameEnded), setListaUsers('') }
-          }>Reiniciar Juego</button>
-        <table className='table' >
-          <thead>
-            <tr>
-              <th>Posición</th>
-              <th>Nombre de usuario</th>
-              <th>Correctas</th>
-              <th>Incorrectas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ranking.map((rank, index) =>
-            (
-
-              <tr key={index + rank.username}>
-                <td>{index + 1}</td>
-                <td>{rank[0]}</td>
-                <td>{rank[1].correctas}</td>
-                <td>{rank[1].incorrectas}</td>
+          <button onClick={() => { clearGame() }} className="secondButton" >Reiniciar Juego</button>
+          <table className='table' >
+            <thead>
+              <tr>
+                <th>Posición</th>
+                <th>Nombre de usuario</th>
+                <th>Correctas</th>
+                <th>Incorrectas</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        
+            </thead>
+            <tbody>
+              {ranking.map((rank, index) =>
+              (
+
+                <tr key={index + rank.username}>
+                  <td>{index + 1}</td>
+                  <td>{rank[0]}</td>
+                  <td>{rank[1].correctas}</td>
+                  <td>{rank[1].incorrectas}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
         </>
-        ) : null
-        }
+      ) : null
+      }
     </>
   );
 }

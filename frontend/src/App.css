@@ -89,6 +89,7 @@ li{
 
 .secondButton {
   margin-top: 10%;
+  cursor: pointer;
   min-width: 200px;
   min-height: 50px;
   border: 3px solid orange;
