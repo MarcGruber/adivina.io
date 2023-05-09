@@ -120,4 +120,13 @@ li{
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
+
+footer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  background-color: orange;
+
 }
