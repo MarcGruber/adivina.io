@@ -139,3 +139,18 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: #3e8e41;
 }
+
+
+.respuestaCorrecta {
+  background-color: green;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.respuestaIncorrecta {
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+}

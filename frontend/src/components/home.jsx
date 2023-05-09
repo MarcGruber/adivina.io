@@ -58,6 +58,7 @@ export function ChatRoom() {
 
     socket.on('pregunta', (data) => {
       setCurrentQuestion(data.question);
+      document.body.style.backgroundColor="white"
       setSegundosRestantes((data.segundos/1000))
     });
     socket.on('usuariosJugando', (listaUsuarios) => {
@@ -101,12 +102,17 @@ export function ChatRoom() {
 
   return (
     <>
+
         <h1>ADIVINA.<span style={{color:'orange'}}>IO</span></h1>
       <div className=" form form-container sign-up-container">
+
         {showMenu ? (<>
-        <button onClick={()=>{setAnfitrion(true)}}  className="secondButton">Crear Sala</button>
-        <button onClick={()=>{setAnfitrion(false)}}  className="secondButton">Unirse a sala</button>
+        <button onClick={()=>{setAnfitrion(true)}}  className="ButtonM">Crear Sala</button>
+        <button onClick={()=>{setAnfitrion(false)}}  className="ButtonM">Unirse a sala</button>
         </>) : ''}
+        </div>
+      <div className=" form form-container sign-up-container">
+        
         {!(joinRoom || viewForm) ? (
           <>
           {anfitrion ? (<>
@@ -171,6 +177,9 @@ export function ChatRoom() {
             ) : null}
           </div>
         )}
+
+      </div>
+      
       <div className='usersGame'>
               {
                 listaUsers ?
@@ -187,7 +196,6 @@ export function ChatRoom() {
               }
             </div>
 
-      </div>
       
       {gameEnded ? (
         <>
