@@ -98,15 +98,7 @@ li{
   border: 1px solid rgb(209, 136, 1);
 }
 
-.btnsM{
- 
-  width: 100%; 
-  
-}
-.ButtonM{
-  border: 3px solid orange;
-  margin-left: 4%;
-}
+
 
 .respuesta-correcta {
   background-color: green;
