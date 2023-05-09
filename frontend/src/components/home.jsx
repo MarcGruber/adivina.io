@@ -8,7 +8,6 @@ const socket = io('http://localhost:3000');
 export function ChatRoom() {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
-  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [ joinRoom, setJointRoom ] = useState(false)
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -59,6 +58,7 @@ export function ChatRoom() {
     socket.on('pregunta', (data) => {
       setCurrentQuestion(data.question);
       document.body.style.backgroundColor="white"
+      // pillamos segundos del setinterval del backend  y los dividmos para hacer el contador
       setSegundosRestantes((data.segundos/1000))
     });
     socket.on('usuariosJugando', (listaUsuarios) => {
@@ -67,7 +67,13 @@ export function ChatRoom() {
 
     socket.on('ranking', (sortedRanking) => {
       try {
-        console.log(sortedRanking);
+        sortedRanking.sort((a, b) => {
+          if (a[1].correctas === b[1].correctas) {
+            return b[1].puntuacion - a[1].puntuacion;
+          } else {
+            return b[1].correctas - a[1].correctas;
+          }
+        });
         setRanking(sortedRanking);
         if (ranking.length > 0) console.log(ranking)
         setGameEnded(true)
@@ -200,14 +206,13 @@ export function ChatRoom() {
       {gameEnded ? (
         <>
         <button onClick={()=>{
-          setIsGameStarted(!isGameStarted), setGameEnded(!gameEnded), setListaUsers('') }
+          setIsGameStarted(!isGameStarted), setJointRoom(false),setViewForm(false),setShowMenu(true), setGameEnded(!gameEnded), setListaUsers('') }
           }>Reiniciar Juego</button>
         <table className='table' >
           <thead>
             <tr>
               <th>Posición</th>
               <th>Nombre de usuario</th>
-              <th>Puntos</th>
               <th>Correctas</th>
               <th>Incorrectas</th>
             </tr>
@@ -219,7 +224,6 @@ export function ChatRoom() {
               <tr key={index + rank.username}>
                 <td>{index + 1}</td>
                 <td>{rank[0]}</td>
-                <td>{rank[1].puntuacion}</td>
                 <td>{rank[1].correctas}</td>
                 <td>{rank[1].incorrectas}</td>
               </tr>
