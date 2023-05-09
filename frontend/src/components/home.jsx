@@ -175,26 +175,33 @@ export function ChatRoom() {
                   </button>
               </div>
             ) : null}
-          </div>
-        )}
-
-      </div>
-      
-      <div className='usersGame'>
+             <div className='usersGame'>
               {
                 listaUsers ?
                   <>
                  <b><p>Usuarios en la sala</p></b>
-                  
+                  <div className='nameDiv'>
+                    <ul className='usuarios'>
                     {listaUsers.map((name) =>
                     (
-                      <h3>{name}</h3>
-                    ))}
+                      <li>{name}</li>
+                    ))}                   
+                    </ul>
+
+                    </div>
                     
                   </>
                   : null
               }
             </div>
+          </div>
+        )}
+       
+
+
+      </div>
+      
+      
 
       
       {gameEnded ? (
