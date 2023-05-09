@@ -104,7 +104,7 @@ export function ChatRoom() {
     <>
 
         <h1>ADIVINA.<span style={{color:'orange'}}>IO</span></h1>
-      <div className=" form form-container sign-up-container">
+      <div className="btnsM">
 
         {showMenu ? (<>
         <button onClick={()=>{setAnfitrion(true)}}  className="ButtonM">Crear Sala</button>
