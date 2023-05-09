@@ -64,6 +64,19 @@
                     "correcta": false
                 }
             ]
+        },
+        {
+            "pregunta": "¿Qué Pokémon sale de un fósil?",
+            "opciones": [
+                {
+                    "opcion": "Anorith",
+                    "correcta": true
+                },
+                {
+                    "opcion": "Golum",
+                    "correcta": false
+                }
+            ]
         }
     ]
 }
