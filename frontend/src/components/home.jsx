@@ -101,6 +101,21 @@ export function ChatRoom() {
 
   return (
     <>
+    <div className='usersGame'>
+              {
+                listaUsers ?
+                  <>
+                 <b><p>Usuarios en la sala</p></b>
+                  
+                    {listaUsers.map((name) =>
+                    (
+                      <h3>{name}</h3>
+                    ))}
+                    
+                  </>
+                  : null
+              }
+            </div>
       <div className=" form form-container sign-up-container">
         {!isGameStarted ? (
           <>
@@ -160,23 +175,10 @@ export function ChatRoom() {
             ) : null}
           </div>
         )}
-      <div className='usersGame'>
-              {
-                listaUsers ?
-                  <>
-                 <b><p>Usuarios en la sala</p></b>
-                  
-                    {listaUsers.map((name) =>
-                    (
-                      <h3>{name}</h3>
-                    ))}
-                    
-                  </>
-                  : null
-              }
-            </div>
+      
 
       </div>
+      
       
       {gameEnded ? (
         <>
