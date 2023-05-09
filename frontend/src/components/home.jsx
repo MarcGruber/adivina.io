@@ -18,9 +18,12 @@ export function ChatRoom() {
   const [categoria, setCategoria] = useState('react');
   const [segundos, setSegundos] = useState(10);
   const [ranking, setRanking] = useState([]);
-  const [listaUsers, setListaUsers] = useState('')
+  const [listaUsers, setListaUsers] = useState('');
+  const [anfitrion, setAnfitrion] = useState(false)
+  const [showMenu, setShowMenu] = useState(true)
   const [showRanking, setShowRanking] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
+  const [viewForm , setViewForm] = useState(false)
   const [segundosRestantes, setSegundosRestantes] = useState(10);
 
   const handleFormUser = () => {
@@ -63,9 +66,6 @@ export function ChatRoom() {
 
     socket.on('ranking', (sortedRanking) => {
       try {
-        // Lógica para actualizar el ranking aquí
-        // ...
-        // Cuando se actualiza el ranking, se envía a los clientes
         console.log(sortedRanking);
         setRanking(sortedRanking);
         if (ranking.length > 0) console.log(ranking)
@@ -86,26 +86,30 @@ export function ChatRoom() {
   };
   socket.on('gameStarted', (boolean) => {
     setIsGameStarted(boolean);
+    setShowMenu(false)
   });
 
   const handleStartGame = (event) => {
     event.preventDefault();
     console.log(room);
-    socket.emit('startGame', {room, username});
+    if(username && room){
+      socket.emit('startGame', {room, username});
+    } else {
+      alert('Falta rellenar campos')
+    }
   };
-
-
-
-
-
-
 
   return (
     <>
         <h1>ADIVINA.IO</h1>
       <div className=" form form-container sign-up-container">
-        {!joinRoom ? (
+        {showMenu ? (<>
+        <button onClick={()=>{setAnfitrion(true)}}  className="secondButton">Crear Sala</button>
+        <button onClick={()=>{setAnfitrion(false)}}  className="secondButton">Unirse a sala</button>
+        </>) : ''}
+        {!(joinRoom || viewForm) ? (
           <>
+          {anfitrion ? (<>
             <label>
               Categoría:
               <select onChange={(e) => setCategoria(e.target.value)}>
@@ -120,6 +124,7 @@ export function ChatRoom() {
                 onChange={(e) => setSegundos(e.target.value)}
               />
             </label>
+          </>) : ''}
             <form onSubmit={handleJoinRoom}>
               <label>
                 Nombre de usuario:
@@ -127,6 +132,7 @@ export function ChatRoom() {
                   type="text"
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
+                  required
                 />
               </label>
               <label>
@@ -135,10 +141,11 @@ export function ChatRoom() {
                   type="text"
                   value={room}
                   onChange={(event) => setRoom(event.target.value)}
+                  required
                 />
               </label>
               <button type="submit" onClick={handleFormUser}>
-                Unirse a la sala
+               {anfitrion ? 'Crear' : 'Unirse'}
               </button>
             </form>
            
