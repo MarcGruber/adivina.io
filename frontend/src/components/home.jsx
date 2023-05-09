@@ -162,7 +162,7 @@ export function ChatRoom() {
           </>
         ) : (
           <div >
-            {activeForm === 'room' ? (
+            {(activeForm === 'room' && anfitrion) ? (
               <div onClick={handleFormSala}>
                 <button onClick={handleStartGame} className="secondButton">
                   Comenzar juego
