@@ -8,15 +8,12 @@ const socket = io('http://localhost:3000');
 
 export function TriviaGame(props) {
   const { roomId, pregunta, user } = props.props
-  console.log(props.props)
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [respuestaCorrecta, setRespuestaCorrecta] = useState(false) // Nuevo estado para indicar si la respuesta es correcta
   const [respuestaCorrectaClass, setRespuestaCorrectaClass] = useState('');
-  console.log(pregunta)
   const handleOptionClick = (optionNumber, roomId, user) => {
     setIsLoading(true)
-    console.log(roomId)
     socket.emit('respuesta', { optionNumber, roomId, user })
     if (pregunta.opciones[optionNumber].correcta === true) {
      document.body.style.backgroundColor="#94E14E"

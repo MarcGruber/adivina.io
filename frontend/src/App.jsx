@@ -4,7 +4,6 @@ import { FooterApp } from './components/footer';
 
 function App() {
 
-console.log('me jodieron')
   return (
       <Router>
         <header>
