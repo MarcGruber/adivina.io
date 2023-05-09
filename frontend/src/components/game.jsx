@@ -13,12 +13,16 @@ export function TriviaGame(props) {
   const [response, setResponse] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [respuestaCorrecta, setRespuestaCorrecta] = useState(false) // Nuevo estado para indicar si la respuesta es correcta
-
+console.log(pregunta)
   const handleOptionClick = (optionNumber, roomId, user) => {
     setIsLoading(true)
     console.log(roomId)
-  
     socket.emit('respuesta', {optionNumber, roomId, user})
+    if(pregunta.opciones[optionNumber].correcta === true ){
+      alert('TRUE')
+    } else {
+      alert('FALSE')
+    }
     setResponse('')
   }
   useEffect(()=>{
