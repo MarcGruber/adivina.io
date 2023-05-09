@@ -23,7 +23,7 @@ export function TriviaGame(props) {
     
     } else {
       
-      document.body.style.backgroundColor="#FF704B"
+      document.body.style.backgroundColor="#FF6243"
     }
     setResponse('')
   }
