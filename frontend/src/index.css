@@ -45,24 +45,105 @@ h1 {
   line-height: 1.1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+
+.ButtonM {
+  position: relative;
+  padding: 1em 1.8em;
+  outline: none;
+  border: 1px solid #303030;
+  background: white;
+  color: orange;
+  text-transform: uppercase;
+  margin-left: 3%;
+  font-size: 14px;
+  overflow: hidden;
+  transition: 0.1s;
+  border-radius: 20px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+  font-weight: bold;
+ }
+ 
+.ButtonM:hover {
+  box-shadow: 0 0 10px orange, 0 0 25px orange, 0 0 50px orange;
+  transition-delay: 0.1s;
+ }
+ 
+.ButtonM span {
+  position: absolute;
+ }
+ 
+.ButtonM span:nth-child(1) {
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, orange);
+ }
+ 
+.ButtonM:hover span:nth-child(1) {
+  left: 100%;
+  transition: 0.7s;
+ }
+ 
+.ButtonM span:nth-child(3) {
+  bottom: 0;
+  right: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, orange);
+ }
+ 
+.ButtonM:hover span:nth-child(3) {
+  right: 100%;
+  transition: 0.7s;
+  transition-delay: 0.35s;
+ }
+ 
+.ButtonM span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, orange);
+ }
+ 
+.ButtonM:hover span:nth-child(2) {
+  top: 100%;
+  transition: 0.7s;
+  transition-delay: 0.17s;
+ }
+ 
+.ButtonM span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(360deg, transparent, orange);
+ }
+ 
+.ButtonM:hover span:nth-child(4) {
+  bottom: 100%;
+  transition: 0.7s;
+  transition-delay: 0.52s;
+ }
+ 
+.ButtonM:active {
+  background: orange;
+  background: linear-gradient(to top right, orange, orange);
+  color: #bfbfbf;
+  box-shadow: 0 0 8px orange, 0 0 8px orange, 0 0 8px orange;
+  transition: 0.1s;
+ }
+ 
+.ButtonM:active span:nth-child(1)
+ span:nth-child(2)
+ span:nth-child(2)
+ span:nth-child(2) {
+  transition: none;
+  transition-delay: none;
+ }
+
+ 
 
 @media (prefers-color-scheme: light) {
   :root {

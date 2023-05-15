@@ -46,6 +46,8 @@ try {
       const games = {}; // aquí se guardará la información de cada juego
 
       io.on('connection', (socket) => {
+
+
         socket.on('join', ({ username, room, segundos, categoria }) => {
           socket.join(room);
           console.log(username)
@@ -122,40 +124,19 @@ try {
               game.ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
               } else {
                 game.ranking[user].puntuacion += Date.now()
-                game.ranking[user].correctas ++ 
+                game.ranking[user].correctas++ 
               }
           } else {
             if(!game.ranking[user]){
               game.ranking[user] = {puntuacion : 0, correctas : 0, incorrectas:0} 
               } else {
-                game.ranking[user].incorrectas ++ 
+                game.ranking[user].incorrectas++ 
               }
             console.log('respuesta incorrecta')
           }
         } catch (error) {
          console.log(error)   
         }
-        });
-        socket.on('disconnect', () => {
-          
-          // Eliminar al usuario de la lista de usuarios en la sala al desconectarse
-          
-          const rooms = Object.keys(socket.rooms).filter((room) => room !== socket.id);
-          
-          rooms.forEach((room) => {
-            
-            if (games[room]) {
-              games[room].users = games[room].users.filter(
-                (username) => username !== socket.username
-              );
-      
-              io.to(room).emit('message', {
-                username: 'Sistema',
-                text: `${socket.username} abandonó la sala`,
-              });
-
-            }
-          });
         });
       });
       

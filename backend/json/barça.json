@@ -90,6 +90,19 @@
                     "correcta": false
                 }
             ]
+        },
+        {
+            "pregunta": "De que equipo procedia Ronaldinho antes de fichar por el FC Barcelona?",
+            "opciones": [
+                {
+                    "opcion": "Cortinhas",
+                    "correcta": false
+                },
+                {
+                    "opcion": "PSG",
+                    "correcta": true
+                }
+            ]
         }
     ]
 }
