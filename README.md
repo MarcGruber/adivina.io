@@ -14,7 +14,7 @@ El proyecto trata sobre un juego de preguntas y respuestas en el que hemos estad
 6. Le damos a comenzar juego
 <img src="img/sala.png">
 
-### Unirse a sala:
+### Unirse a sala y empezar a jugar:
 1. Hacemos clic al botón unirse a sala
 2. Introducimos nuestro nombre y la sala a la que queremos unirnos
 3. Hacemos clic a unirse
