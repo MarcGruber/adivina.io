@@ -8,7 +8,7 @@ El proyecto trata sobre un juego de preguntas y respuestas en el que hemos estad
 2. Seleccionamos categoría y los segundos por pregunta
 3. Ponemos usuario y nombre de sala
 4. Le damos a crear
-![crear sala](https://github.com/MarcGruber/adivina.io/tree/test/img/crearSala.png)
+ <img src="img/crearSala.png">
 
 Esperamos a los usuarios.
 Le damos a comenzar juego
